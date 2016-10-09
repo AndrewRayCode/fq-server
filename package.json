@@ -4,12 +4,20 @@
   "description": "",
   "main": "fq.js",
   "scripts": {
+    "start": "PORT=6060 node server.js",
+    "dev": "PORT=6060 nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "knex": "^0.12.3",
+    "multer": "^1.2.0",
     "sqlite3": "^3.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }

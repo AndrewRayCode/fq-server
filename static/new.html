@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>
+			Add FQ Study
+		</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script src="http://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js"></script>
+		<script src="add.js"></script>
+	</head>
+	<body>
+        <form method="POST" action="/add">
+
+            <div class="form-group">
+                <label>
+                    Title
+                    <input
+                        name="title"
+                        type="text"
+                        placeholder="Title"
+                        class="form-control"
+                    />
+                </label>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input
+                        value="true"
+                        name="includesFqs"
+                        type="checkbox"
+                        placeholder="title"
+                        checked
+                    />
+                    Includes "fluoroquinolones?" (Not only "quinolones"?)
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Authors
+                    <input
+                        class="form-control"
+                        name="authors"
+                        type="text"
+                        placeholder="Author 1, Author 2..."
+                    />
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Keywords
+                    <input
+                        class="form-control"
+                        name="keywords"
+                        type="text"
+                        placeholder="Keyword 1, Keyword 2..."
+                    />
+                </label>
+            </div>
+
+
+            <div class="form-group">
+                <label>
+                    Conclusions
+                    <textarea
+                        class="form-control"
+                        name="conclusions"
+                        placeholder="Conclusions"
+                    ></textarea>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    File?
+                    <input
+                        type="file"
+                        name="file"
+                    />
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Full Text Link?
+                    <input
+                        type="text"
+                        name="fullText"
+                        class="form-control"
+                        placeholder="http://..."
+                    />
+                </label>
+            </div>
+
+            <input class="btn btn-primary btn-lg" type="submit" />
+        </form>
+	</body>
+</html>
