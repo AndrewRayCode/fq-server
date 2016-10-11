@@ -309,26 +309,46 @@ app.post( '/add', addUploads, function( req, res ) {
 
 });
 
-function getAllKeywords() {
+function getKeywords( query ) {
+    const normalizedQuery = query || '';
     return knex.select( 'keywords.*' )
         .select( knex.raw( 'COUNT( keywords.id ) as study_count' ) )
         .from( 'keywords' )
         .leftJoin( 'study_keywords', 'study_keywords.keyword_id', 'keywords.id' )
-        .groupBy( 'keywords.id' );
+        .groupBy( 'keywords.id' )
+        .where( 'name', 'like', `%${ query }%` )
+        .orWhere( 'UPPER( name )', 'like', `%${ normalizedQuery.toUpperCase() }%` );
 }
 
-function getAllAuthors() {
+function getAuthors( query ) {
+    const normalizedQuery = query || '';
     return knex.select( 'authors.*' )
         .select( knex.raw( 'COUNT( authors.id ) as study_count' ) )
         .from( 'authors' )
         .leftJoin( 'study_keywords', 'study_keywords.keyword_id', 'authors.id' )
-        .groupBy( 'authors.id' );
+        .groupBy( 'authors.id' )
+        .where( 'name', 'like', `%${ query }%` )
+        .orWhere( 'UPPER( name )', 'like', `%${ normalizedQuery.toUpperCase() }%` );
+}
+
+function doesStudyExistWithTitle( title ) {
+    return knex.select( 'id' )
+        .from( 'studies' )
+        .where( 'title', title )
+        .then( function( row ) {
+            return row.length ? row[ 0 ].id : null;
+        });
 }
 
 app.get( '/keywords', function( req, res ) {
 
-    return getAllKeywords().then( function( keywords ) {
-        res.json( keywords );
+    const query = ( req.query && req.query.query ) || '';
+
+    return getKeywords( query ).then( function( keywords ) {
+        res.json({
+            query: query,
+            suggestions: keywords
+        });
     }).catch( function( error ) {
         console.error( error );
         res.status( 500 );
@@ -339,12 +359,156 @@ app.get( '/keywords', function( req, res ) {
 
 app.get( '/authors', function( req, res ) {
 
-    return getAllAuthors().then( function( authors ) {
-        res.json( authors );
+    const query = ( req.query && req.query.query ) || '';
+
+    return getAuthors( query ).then( function( authors ) {
+        res.json({
+            query: query,
+            suggestions: authors
+        });
     }).catch( function( error ) {
         console.error( error );
         res.status( 500 );
         res.json( error );
+    });
+
+});
+
+app.get( '/checkTitle', function( req, res ) {
+
+    const title = req.query && req.query.title;
+
+    return doesStudyExistWithTitle( title ).then( function( exists ) {
+
+        res.json({ existingId: exists });
+
+    }).catch( function( error ) {
+        console.error( error );
+        res.status( 500 );
+        res.json({ error: error });
+    });
+
+});
+
+function getSiteData() {
+    return getKeywords().then( function( keywords ) {
+        return { keywords: keywords };
+    }).then( function( continuation ) {
+
+        return getAuthors().then( function( authors ) {
+
+            return Object.assign( {}, continuation, {
+                authors: authors,
+            })
+
+        });
+
+    }).then( function( continuation ) {
+
+        return knex( 'studies' ).count( '* as count' ).then( function( row ) {
+
+            return Object.assign( {}, continuation, {
+                totalStudies: row[ 0 ].count,
+            })
+
+        })
+
+    });
+}
+
+app.get( '/siteData', function( req, res ) {
+
+    return getSiteData().then( function( data ) {
+
+        res.json( data );
+
+    }).catch( function( error ) {
+        console.error( error );
+        res.status( 500 );
+        res.json({ error: error });
+    });
+
+});
+
+function objectValues( obj ) {
+    return Object.keys( obj ).map( function( key ) { return obj[ key  ]; });
+}
+
+function searchStudies( search ) {
+
+    var query = knex( 'studies' )
+        .select( 'studies.*' )
+
+        .select( knex.raw( 'group_concat( keywords.id, "↕" ) as keyword_ids' ) )
+        .select( knex.raw( 'group_concat( keywords.name, "↕" ) as keyword_names' ) )
+        .select( knex.raw( 'group_concat( IFNULL( keywords.description, "null" ), "↕" ) as keyword_descriptions' ) )
+        .leftJoin( 'study_keywords', 'study_keywords.study_id', 'studies.id' )
+        .leftJoin( 'keywords', 'study_keywords.keyword_id', 'keywords.id'  )
+
+        .select( knex.raw( 'group_concat( authors.id, "↕" ) as author_ids' ) )
+        .select( knex.raw( 'group_concat( authors.name, "↕" ) as author_names' ) )
+        .leftJoin( 'study_authors', 'study_authors.study_id', 'studies.id' )
+        .leftJoin( 'authors', 'study_authors.author_id', 'authors.id'  )
+
+        .groupBy( 'studies.id' )
+
+    if( 'keywords' in search ) {
+        query = query.whereIn( 'keywords.id', search.keywords );
+    }
+
+    return query.then( function( rows ) {
+        return rows.map( function( row ) {
+
+            var keyword_ids = row.keyword_ids.split( '↕' );
+            var keyword_names = row.keyword_names.split( '↕' );
+            var keyword_descriptions = row.keyword_descriptions.split( '↕' );
+            var author_ids = row.author_ids.split( '↕' );
+            var author_names = row.author_names.split( '↕' );
+
+            return {
+                id: row.id,
+                title: row.title,
+                includesFQs: !!row.includesFQs,
+                fullText: row.fullText,
+                year: row.year,
+                month: row.month,
+                conclusions: row.conclusions,
+                keyword_names: keyword_names,
+
+                // I don't know why the above query returns dupe keywords,
+                // authors, etc. tried adding DISTINCT to the group_concat
+                // functions but it just errors. De-dupe and deserialize
+                keywords: objectValues( keyword_ids.reduce( function( memo, id, index ) {
+                    memo[ id ] = {
+                        id: id,
+                        name: keyword_names[ index ],
+                        description: keyword_descriptions[ index ],
+                    };
+                    return memo;
+                }, {} ) ),
+                authors: objectValues( author_ids.reduce( function( memo, id, index ) {
+                    memo[ id ] = {
+                        id: id,
+                        name: author_names[ index ],
+                    };
+                    return memo;
+                }, {} ) ),
+            };
+        });
+    });
+
+}
+
+app.get( '/studies', function( req, res ) {
+
+    return searchStudies( req.query ).then( function( studies ) {
+
+        res.json( studies );
+
+    }).catch( function( error ) {
+        console.error( error );
+        res.status( 500 );
+        res.json({ error: error });
     });
 
 });

@@ -1,96 +1,34 @@
-var keywords = {
-	infection: {
-		name: 'Infection',
-		description: 'Infectious disease side effects of antibiotics',
-	},
-	staphylococcus: {
-		name: 'Staphylococcus',
-		description: 'Staphylococcus is a genus of Gram-positive bacteria. Under the microscope, they appear round, and form in grape-like clusters.',
-	}
-};
+function formatKeyword( keyword, selected ) {
+	return `<button
+        class="btn btn-default js-keyword-select"
+        type="button"
+        data-id="${ keyword.id }"
+    >
+        ${ keyword.name } <span class="badge">${ keyword.study_count || ''}</span>
+    </button>`;
+}
 
-var studies = [{
-	title: '“Collateral Damage” from Cephalosporin or Quinolone Antibiotic Therapy',
-	includesFqs: false,
-	keywords: [
-		keywords.infection,
-		keywords.staphylococcus
-	],
-	authors: [
-		'David L. Paterson'
-	],
-	fullText: 'http://cid.oxfordjournals.org/content/38/Supplement_4/S341.full',
-	abstract: 'Quinolone use has been linked to infection with methicillin-resistant Staphylococcus aureus and with increasing quinolone resistance in gram-negative bacilli, such as Pseudomonas aeruginosa. Neither third-generation cephalosporins nor quinolones appear suitable for sustained use in hospitals as “workhorse” antibiotic therapy.',
-	conclusions: [
-		'&hellip;cephalosporin and quinolone use has been linked more frequently to collateral damage (in the form of antibiotic-resistant superinfections)'
-	],
-	images: [{
-		title: 'Table 1. Summary of potential “collateral damage” from use of cephalosporins and quinolones.',
-		link: 'http://cid.oxfordjournals.org/content/38/Supplement_4/S341/F1.large.jpg'
-	}]
-}, {
-	title: '',
-	includesFqs: false,
-	keywords: [
-		keywords.infection,
-		keywords.staphylococcus
-	],
-	authors: [
-		''
-	],
-	fullText: '',
-	abstract: '',
-	conclusions: [
-		''
-	],
-	images: [{
-		title: '',
-		link: ''
-	}]
-}, {
-	title: '',
-	includesFqs: false,
-	keywords: [
-		keywords.infection,
-		keywords.staphylococcus
-	],
-	authors: [
-		''
-	],
-	fullText: '',
-	abstract: '',
-	conclusions: [
-		''
-	],
-	images: [{
-		title: '',
-		link: ''
-	}]
-}, {
-	title: '',
-	includesFqs: false,
-	keywords: [
-		keywords.infection,
-		keywords.staphylococcus
-	],
-	authors: [
-		''
-	],
-	fullText: '',
-	abstract: '',
-	conclusions: [
-		''
-	],
-	images: [{
-		title: '',
-		link: ''
-	}]
-}];
+function formatKeywordInline( keyword, selected ) {
+	return `<button
+        class="btn btn-default js-keyword-select"
+        type="button"
+        data-id="${ keyword.id }"
+    >
+        ${ keyword.name }
+    </button>`;
+}
 
-function formatKeyword( keyword ) {
-	return `
-		${ keyword.name }
-	`;
+
+function formatActiveKeyword( keyword, selected ) {
+	return `<button
+        class="btn btn-primary js-keyword-remove"
+        type="button"
+        data-id="${ keyword.id }"
+        title="Remove this keyword search"
+    >
+        ${ keyword.name }
+        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+    </button>`;
 }
 
 function formatStudy( study ) {
@@ -111,13 +49,79 @@ function formatStudy( study ) {
 			<b>Conclusions:</b> ${ study.conclusions }
 		</p>
 		<p>
-			<b>Keywords:</b> ${ study.keywords.map( kw => formatKeyword( kw ) ).join('') }
+			<b>Keywords:</b> ${ study.keywords.map( kw => formatKeywordInline( kw ) ).join('') }
 		</p>
 	</li>`;
 }
 
-$(document).ready(function() {
-	var $studies = $('#studies');
+function renderKeywords( allKeywords, selectedKeywords ) {
 
-	$studies.html( studies.map( study => formatStudy( study ) ).join('\n') );
+    const activeKeywords = allKeywords.filter( function( kw ) {
+
+        return selectedKeywords.indexOf( kw.id ) > -1;
+
+    });
+
+    const inactiveKeywords = allKeywords.filter( function( kw ) {
+
+        return selectedKeywords.indexOf( kw.id ) === -1;
+
+    });
+
+    $( '#keywords' ).html( inactiveKeywords.map( formatKeyword ).join( '\n' ) );
+    $( '#activeKeywords' ).html( activeKeywords.map( formatActiveKeyword ).join( '\n' ) );
+    $( '#activeLabel' ).css( 'display', activeKeywords.length > 0 ? 'block' : 'none' );
+
+}
+
+function updateStudies( selectedKeywords ) {
+
+    if( selectedKeywords.length ) {
+
+        $.getJSON( '/studies', { keywords: selectedKeywords }).then( function( studies ) {
+            $( '#studies' ).html( studies.map( formatStudy ).join( '\n' ) );
+        });
+
+    }
+
+}
+
+$( document ).ready( function() {
+
+    var selectedKeywords = [];
+
+	var $studies = $( '#studies' );
+    var allKeywords;
+
+    $.getJSON( '/siteData' ).then( function( siteData ) {
+
+        allKeywords = siteData.keywords;
+        var totalStudies = siteData.totalStudies;
+        renderKeywords( allKeywords, selectedKeywords );
+
+        $( '#totalStudies' ).html( totalStudies );
+
+    }).fail( function( error ) {
+        throw error;
+    });
+
+    $( document ).on( 'click', '.js-keyword-select', function( event ) {
+
+        var $button = $( this );
+        selectedKeywords.push( $button.data( 'id' ) );
+        renderKeywords( allKeywords, selectedKeywords );
+        updateStudies( selectedKeywords );
+
+    });
+
+    $( document ).on( 'click', '.js-keyword-remove', function( event ) {
+
+        var $button = $( this );
+        var id = $button.data( 'id' );
+        selectedKeywords = selectedKeywords.filter( function( search ) { return search !== id; } );
+        renderKeywords( allKeywords, selectedKeywords );
+        updateStudies( selectedKeywords );
+
+    });
+
 });
