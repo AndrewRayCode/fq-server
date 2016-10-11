@@ -33,6 +33,7 @@ if( !exists ) {
                 fullText VARCHAR(255),
                 year INT,
                 month INT,
+                abstract TEXT,
                 conclusions TEXT,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
@@ -125,6 +126,7 @@ app.post( '/add', addUploads, function( req, res ) {
     const year = req.body.year;
     const includesFqs = req.body.includesFqs;
     const conclusions = req.body.conclusions;
+    const abstract = req.body.abstract;
     const fullText = ( req.files && req.files[ 0 ] ) || req.body.fullText;
 
     const authors = req.body.authors.split(',').map( function( author ) {
@@ -256,7 +258,8 @@ app.post( '/add', addUploads, function( req, res ) {
                 fullText: fullText,
                 month: month,
                 year: year,
-                conclusions: conclusions
+                conclusions: conclusions,
+                abstract: abstract
             }).into( 'studies' )
                 .returning( 'id' )
                 .then(function( studyRow ) {
@@ -473,6 +476,7 @@ function searchStudies( search ) {
                 year: row.year,
                 month: row.month,
                 conclusions: row.conclusions,
+                abstract: row.abstract,
                 keyword_names: keyword_names,
 
                 // I don't know why the above query returns dupe keywords,
