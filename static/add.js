@@ -6,6 +6,9 @@ $( document ).ready( function() {
     const $existsMsg = $( '#existsMsg' );
     const $submitErrorToast = $( '#submitErrorToast' );
     const $submitErrorMsg = $( '#submitErrorMsg' );
+    const $conclusions = $( 'input[name="conclusions"]' );
+    const $abstract = $( 'input[name="abstract"]' );
+
     $title.blur( function() {
 
         $existsToast.hide();
@@ -36,6 +39,20 @@ $( document ).ready( function() {
                 })
             };
         }
+    });
+
+    $conclusions.blur( function() {
+
+        const original = $conclusions.val() || '';
+        $conclusions.val( original.trim() );
+
+    });
+
+    $abstract.blur( function() {
+
+        const original = $abstract.val() || '';
+        $abstract.val( original.trim() );
+
     });
 
     $authors.blur( function() {

@@ -337,7 +337,7 @@ function getAuthors( query ) {
 function doesStudyExistWithTitle( title ) {
     return knex.select( 'id' )
         .from( 'studies' )
-        .where( 'title', title )
+        .where( 'title', 'like', `%${ title }` )
         .then( function( row ) {
             return row.length ? row[ 0 ].id : null;
         });
