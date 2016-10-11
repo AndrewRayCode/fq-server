@@ -103,10 +103,10 @@ app.use( '/', express.static( path.join( __dirname, 'static' ) ) );
 app.use( '/files', express.static( path.join( __dirname, 'uploads' ) ) );
 
 var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: function( req, file, cb ) {
       cb( null, path.join( __dirname, 'uploads' ) )
     },
-    filename: function (req, file, cb) {
+    filename: function( req, file, cb ) {
         cb( null, file.originalname );
     }
 });
@@ -119,7 +119,7 @@ var addUploads = upload.fields( [{
 
 app.post( '/add', addUploads, function( req, res ) {
 
-    console.log( req.body, req.files );
+    const fileName = req.files && req.files.file && req.files.file[ 0 ] && req.files.file[ 0 ].originalname;
 
     const title = req.body.title;
     const month = req.body.month;
@@ -127,7 +127,7 @@ app.post( '/add', addUploads, function( req, res ) {
     const includesFqs = req.body.includesFqs;
     const conclusions = req.body.conclusions;
     const abstract = req.body.abstract;
-    const fullText = ( req.files && req.files[ 0 ] ) || req.body.fullText;
+    const fullText = fileName ? '/uploads/' + fileName : req.body.fullText;
 
     const authors = req.body.authors.split(',').map( function( author ) {
         return author.trim();
