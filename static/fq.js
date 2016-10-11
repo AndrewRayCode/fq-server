@@ -34,6 +34,19 @@ function formatAuthor( author ) {
     return author.name;
 }
 
+var SHOW_MORE_CHAR_LIMIT = 400;
+function showMoreify( text ) {
+    if( text.length < SHOW_MORE_CHAR_LIMIT ) {
+        return text;
+    }
+
+    return `<span class="js-show-more-container">
+        <span class="js-start-text">${ text.substring( 0, SHOW_MORE_CHAR_LIMIT ) }</span>&hellip;
+        <a href="#" class="js-show-more">Show all</a>
+        <span class="js-finish-text" style="display:none">${ text.substring( SHOW_MORE_CHAR_LIMIT ) }</span>
+    </span>`;
+}
+
 function formatStudy( study ) {
     return `<li class="study">
         <div class="panel panel-default">
@@ -48,7 +61,7 @@ function formatStudy( study ) {
                     </li>
                 </ul>
                 <p>
-                    <b>Abstract:</b> ${ study.abstract }
+                    <b>Abstract:</b> ${ showMoreify( study.abstract ) }
                 </p>
                 <p>
                     <b>Conclusions:</b> ${ study.conclusions.replace( /\n/g, '<br />' ) }
@@ -128,6 +141,15 @@ $( document ).ready( function() {
         selectedKeywords = selectedKeywords.filter( function( search ) { return search !== id; } );
         renderKeywords( allKeywords, selectedKeywords );
         updateStudies( selectedKeywords );
+
+    });
+
+    $( document ).on( 'click', '.js-show-more', function( event ) {
+        event.preventDefault();
+        const $parent = $( this ).closest( '.js-show-more-container' );
+        const $start = $parent.find( '.js-start-text' );
+        const $end = $parent.find( '.js-finish-text' );
+        $parent.html( $start.html() + $end.html() );
 
     });
 
