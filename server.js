@@ -442,14 +442,13 @@ function searchStudies( search ) {
     var query = knex( 'studies' )
         .select( 'studies.*' )
 
-        .select( knex.raw( 'group_concat( keywords.id, "↕" ) as keyword_ids' ) )
-        .select( knex.raw( 'group_concat( keywords.name, "↕" ) as keyword_names' ) )
-        .select( knex.raw( 'group_concat( IFNULL( keywords.description, "null" ), "↕" ) as keyword_descriptions' ) )
+        .select( knex.raw( 'group_concat( DISTINCT keywords.id ) as keyword_ids' ) )
+        .select( knex.raw( 'group_concat( DISTINCT keywords.name ) as keyword_names' ) )
         .leftJoin( 'study_keywords', 'study_keywords.study_id', 'studies.id' )
         .leftJoin( 'keywords', 'study_keywords.keyword_id', 'keywords.id'  )
 
-        .select( knex.raw( 'group_concat( authors.id, "↕" ) as author_ids' ) )
-        .select( knex.raw( 'group_concat( authors.name, "↕" ) as author_names' ) )
+        .select( knex.raw( 'group_concat( DISTINCT authors.id ) as author_ids' ) )
+        .select( knex.raw( 'group_concat( DISTINCT authors.name ) as author_names' ) )
         .leftJoin( 'study_authors', 'study_authors.study_id', 'studies.id' )
         .leftJoin( 'authors', 'study_authors.author_id', 'authors.id'  )
 
@@ -462,11 +461,10 @@ function searchStudies( search ) {
     return query.then( function( rows ) {
         return rows.map( function( row ) {
 
-            var keyword_ids = row.keyword_ids.split( '↕' );
-            var keyword_names = row.keyword_names.split( '↕' );
-            var keyword_descriptions = row.keyword_descriptions.split( '↕' );
-            var author_ids = row.author_ids.split( '↕' );
-            var author_names = row.author_names.split( '↕' );
+            var keyword_ids = row.keyword_ids.split( ',' );
+            var keyword_names = row.keyword_names.split( ',' );
+            var author_ids = row.author_ids.split( ',' );
+            var author_names = row.author_names.split( ',' );
 
             return {
                 id: row.id,
@@ -477,7 +475,6 @@ function searchStudies( search ) {
                 month: row.month,
                 conclusions: row.conclusions,
                 abstract: row.abstract,
-                keyword_names: keyword_names,
 
                 // I don't know why the above query returns dupe keywords,
                 // authors, etc. tried adding DISTINCT to the group_concat
@@ -486,7 +483,6 @@ function searchStudies( search ) {
                     memo[ id ] = {
                         id: id,
                         name: keyword_names[ index ],
-                        description: keyword_descriptions[ index ],
                     };
                     return memo;
                 }, {} ) ),

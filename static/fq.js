@@ -1,5 +1,5 @@
 function formatKeyword( keyword, selected ) {
-	return `<button
+    return `<button
         class="btn btn-default js-keyword-select"
         type="button"
         data-id="${ keyword.id }"
@@ -9,18 +9,17 @@ function formatKeyword( keyword, selected ) {
 }
 
 function formatKeywordInline( keyword, selected ) {
-	return `<button
-        class="btn btn-default js-keyword-select"
-        type="button"
+    return `<span
+        class="js-keyword-select"
         data-id="${ keyword.id }"
     >
         ${ keyword.name }
-    </button>`;
+    </span>`;
 }
 
 
 function formatActiveKeyword( keyword, selected ) {
-	return `<button
+    return `<button
         class="btn btn-primary js-keyword-remove"
         type="button"
         data-id="${ keyword.id }"
@@ -31,27 +30,31 @@ function formatActiveKeyword( keyword, selected ) {
     </button>`;
 }
 
+function formatAuthor( author ) {
+    return author.name;
+}
+
 function formatStudy( study ) {
-	return `<li class="study">
-		<div class="title">${ study.title }</div>
-		<ul class="subTitle">
-			<li>
-				<a href="${ study.fullText }" target="_blank">Full Text</a>
-			</li>
-			<li>
-				<b>Authors:</b> ${ study.authors.join(', ') }
-			</li>
-		</ul>
-		<p>
-			<b>Abstract:</b> ${ study.abstract }
-		</p>
-		<p>
-			<b>Conclusions:</b> ${ study.conclusions }
-		</p>
-		<p>
-			<b>Keywords:</b> ${ study.keywords.map( kw => formatKeywordInline( kw ) ).join('') }
-		</p>
-	</li>`;
+    return `<li class="study">
+        <div class="title">${ study.title }</div>
+        <ul class="subTitle">
+            <li>
+                <a href="${ study.fullText }" target="_blank">Full Text</a>
+            </li>
+            <li>
+                <b>Authors:</b> ${ study.authors.map( a => formatAuthor( a ) ).join(', ') }
+            </li>
+        </ul>
+        <p>
+            <b>Abstract:</b> ${ study.abstract }
+        </p>
+        <p>
+            <b>Conclusions:</b> ${ study.conclusions }
+        </p>
+        <p>
+            <b>Keywords:</b> ${ study.keywords.map( kw => formatKeywordInline( kw ) ).join('') }
+        </p>
+    </li>`;
 }
 
 function renderKeywords( allKeywords, selectedKeywords ) {
@@ -90,7 +93,7 @@ $( document ).ready( function() {
 
     var selectedKeywords = [];
 
-	var $studies = $( '#studies' );
+    var $studies = $( '#studies' );
     var allKeywords;
 
     $.getJSON( '/siteData' ).then( function( siteData ) {
