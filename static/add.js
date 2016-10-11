@@ -1,12 +1,18 @@
 $( document ).ready( function() {
 
     const $title = $( 'input[name="title"]' );
+    const $authors = $( 'input[name="authors"]' );
     const $existsToast = $( '#existsToast' );
     const $existsMsg = $( '#existsMsg' );
+    const $submitErrorToast = $( '#submitErrorToast' );
+    const $submitErrorMsg = $( '#submitErrorMsg' );
     $title.blur( function() {
 
         $existsToast.hide();
-        const title = $title.val();
+        const originalTitle = $title.val();
+        const title = originalTitle.trim().replace( /\.$/, '' );
+
+        $title.val( title );
 
         $.getJSON( '/checkTitle', { title: title }, function( response ) {
             const id = response.existingId;
@@ -32,6 +38,18 @@ $( document ).ready( function() {
         }
     });
 
+    $authors.blur( function() {
+
+        const originalAuthors = (
+            $authors.val() || ''
+        ).trim().replace( /\.$/, '' );
+
+        $authors.val( originalAuthors.split( ',' ).map( function( a ) {
+            return a.trim().replace( /^\d+|\d+$/, '' );
+        }).join(', ') );
+
+    });
+
     $( 'input[name="authors"]' ).autocomplete({
         serviceUrl: '/authors',
         delimiter: /\s*,\s*/,
@@ -51,7 +69,7 @@ $( document ).ready( function() {
         event.preventDefault();
     
         var formData = new FormData( $form.get( 0 ) );
-        console.log( formData );
+        $submitErrorToast.hide();
         
         $.ajax({
             url: '/add',
@@ -60,9 +78,20 @@ $( document ).ready( function() {
             processData: false,
             contentType: false,
         }).then( function() {
-            console.log('done');
+
+            $('form').get( 0 ).reset();
+
         }).catch( function( error ) {
-            console.error('failure', error);
+            console.error( error );
+            var errorText;
+            try {
+                var response = JSON.parse( error.responseText );
+                errorText = response.error;
+            } catch( e ) {
+                errorText = response.responseText;
+            }
+            $submitErrorToast.show();
+            $submitErrorMsg.html( errorText || 'Unknown error' );
         });
     });
 

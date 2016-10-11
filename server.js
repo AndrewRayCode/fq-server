@@ -307,7 +307,7 @@ app.post( '/add', addUploads, function( req, res ) {
         }).catch( function( knexError ) {
             console.error( knexError );
             res.status( 400 );
-            res.json( knexError );
+            res.json({ error: knexError.message || knexError });
         });
 
 });

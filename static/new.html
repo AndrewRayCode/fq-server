@@ -12,128 +12,138 @@
         <script src="add.js"></script>
     </head>
     <body>
-        <form method="POST" action="/add">
+        <header>
+            <h1>Add a study</h1>
+        </header>
+        <div class="content">
+            <form method="POST" action="/add">
 
-            <div class="form-group">
-                <label>
-                    Title
+                <div class="form-group">
+                    <label>
+                        Title
+                    </label>
                     <input
                         name="title"
                         type="text"
                         placeholder="Title"
                         class="form-control"
                     />
-                </label>
-                <div class="alert alert-danger" role="alert" id="existsToast" style="display:none">
-                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                    <span class="sr-only">Error:</span>
-                    <span id="existsMsg"></span>
-              </div>
-            </div>
+                    <div class="alert alert-danger" role="alert" id="existsToast" style="display:none">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        <span id="existsMsg"></span>
+                    </div>
+                </div>
 
-            <div class="checkbox">
-                <label>
-                    <input
-                        value="true"
-                        name="includesFqs"
-                        type="checkbox"
-                        placeholder="title"
-                        checked
-                    />
-                    Includes "fluoroquinolones?" (Not only "quinolones"?)
-                </label>
-            </div>
+                <div class="checkbox">
+                    <label>
+                        <input
+                            value="true"
+                            name="includesFqs"
+                            type="checkbox"
+                            placeholder="title"
+                            checked
+                        />
+                        Includes "fluoroquinolones?" (Not only "quinolones"?)
+                    </label>
+                </div>
 
-            <div class="form-group">
-                <label>
-                    Year
+                <div class="form-group">
+                    <label>
+                        Year
+                    </label>
                     <input
                         class="form-control"
                         name="year"
                         type="number"
                         placeholder="2016"
                     />
-                </label>
-                <label>
-                    Month
-                    <input
-                        class="form-control"
-                        name="month"
-                        type="number"
-                        placeholder="1"
-                    />
-                </label>
-            </div>
+                    <label>
+                        Month
+                        <input
+                            class="form-control"
+                            name="month"
+                            type="number"
+                            placeholder="1"
+                        />
+                    </label>
+                </div>
 
-            <div class="form-group">
-                <label>
-                    Authors
+                <div class="form-group">
+                    <label>
+                        Authors
+                    </label>
                     <input
                         class="form-control"
                         name="authors"
                         type="text"
                         placeholder="Author 1, Author 2..."
                     />
-                </label>
-            </div>
+                </div>
 
-            <div class="form-group">
-                <label>
-                    Keywords
+                <div class="form-group">
+                    <label>
+                        Keywords
+                    </label>
                     <input
                         class="form-control"
                         name="keywords"
                         type="text"
                         placeholder="Keyword 1, Keyword 2..."
                     />
-                </label>
-            </div>
+                </div>
 
-            <div class="form-group">
-                <label>
-                    Abstract
+                <div class="form-group">
+                    <label>
+                        Abstract
+                    </label>
                     <textarea
                         class="form-control"
                         name="abstract"
                         placeholder="Abstract"
                     ></textarea>
-                </label>
-            </div>
+                </div>
 
-            <div class="form-group">
-                <label>
-                    Conclusions
+                <div class="form-group">
+                    <label>
+                        Conclusions
+                    </label>
                     <textarea
                         class="form-control"
                         name="conclusions"
                         placeholder="Conclusions"
                     ></textarea>
-                </label>
-            </div>
+                </div>
 
-            <div class="form-group">
-                <label>
-                    File?
+                <div class="form-group">
+                    <label>
+                        File?
+                    </label>
                     <input
                         type="file"
                         name="file"
                     />
-                </label>
-            </div>
+                </div>
 
-            <div class="form-group">
-                <label>
-                    Full Text Link?
+                <div class="form-group">
+                    <label>
+                        Full Text Link?
+                    </label>
                     <input
                         type="text"
                         name="fullText"
                         class="form-control"
                         placeholder="http://..."
                     />
-                </label>
-            </div>
+                </div>
 
-            <input class="btn btn-primary btn-lg" type="submit" />
-        </form>
+                <div class="alert alert-danger" role="alert" id="submitErrorToast" style="display:none">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    <span id="submitErrorMsg"></span>
+                </div>
+                <input class="btn btn-primary btn-lg" type="submit" />
+            </form>
+        </div>
     </body>
 </html>

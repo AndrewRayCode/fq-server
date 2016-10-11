@@ -36,24 +36,28 @@ function formatAuthor( author ) {
 
 function formatStudy( study ) {
     return `<li class="study">
-        <div class="title">${ study.title }</div>
-        <ul class="subTitle">
-            <li>
-                <a href="${ study.fullText }" target="_blank">Full Text</a>
-            </li>
-            <li>
-                <b>Authors:</b> ${ study.authors.map( a => formatAuthor( a ) ).join(', ') }
-            </li>
-        </ul>
-        <p>
-            <b>Abstract:</b> ${ study.abstract }
-        </p>
-        <p>
-            <b>Conclusions:</b> ${ study.conclusions }
-        </p>
-        <p>
-            <b>Keywords:</b> ${ study.keywords.map( kw => formatKeywordInline( kw ) ).join('') }
-        </p>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="title">${ study.title }</div>
+                <ul class="subTitle">
+                    <li>
+                        <a href="${ study.fullText }" target="_blank">Full Text</a>
+                    </li>
+                    <li>
+                        <b>Authors:</b> ${ study.authors.map( a => formatAuthor( a ) ).join(', ') }
+                    </li>
+                </ul>
+                <p>
+                    <b>Abstract:</b> ${ study.abstract }
+                </p>
+                <p>
+                    <b>Conclusions:</b> ${ study.conclusions.replace( /\n/g, '<br />' ) }
+                </p>
+                <p>
+                    <b>Keywords:</b> ${ study.keywords.map( kw => formatKeywordInline( kw ) ).join(', ') }
+                </p>
+            </div>
+        </div>
     </li>`;
 }
 
