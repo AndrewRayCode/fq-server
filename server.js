@@ -92,11 +92,14 @@ if( !port ) {
 
 var app = express();
 
+var fileUploadSizeLimit = '5mb';
+
 // to support JSON-encoded bodies
-app.use( bodyParser.json() );
+app.use( bodyParser.json({ limit: fileUploadSizeLimit }) );
 // to support URL-encoded bodies
 app.use( bodyParser.urlencoded({
-    extended: true
+    extended: true,
+    limit: fileUploadSizeLimit
 }) );
 
 app.use( '/', express.static( path.join( __dirname, 'static' ) ) );
