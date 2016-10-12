@@ -114,7 +114,12 @@ var storage = multer.diskStorage({
     }
 });
 
-var upload = multer({ storage: storage });
+var upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5000000
+    }
+});
 
 var addUploads = upload.fields( [{
     name: 'file', maxCount: 1
