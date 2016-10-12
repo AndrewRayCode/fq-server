@@ -92,7 +92,7 @@ if( !port ) {
 
 var app = express();
 
-var fileUploadSizeLimit = '5mb';
+var fileUploadSizeLimit = '10mb';
 
 // to support JSON-encoded bodies
 app.use( bodyParser.json({ limit: fileUploadSizeLimit }) );
@@ -117,7 +117,7 @@ var storage = multer.diskStorage({
 var upload = multer({
     storage: storage,
     limits: {
-        fileSize: 5000000
+        fileSize: 10000000
     }
 });
 
