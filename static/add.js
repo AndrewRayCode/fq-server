@@ -45,7 +45,7 @@ $( document ).ready( function() {
 
         const original = $conclusions.val() || '';
         $conclusions.val(
-            original.trim().replace( /- /, '' )
+            original.trim().replace( /- /g, '' )
         );
 
     });
@@ -54,7 +54,7 @@ $( document ).ready( function() {
 
         const original = $abstract.val() || '';
         $abstract.val(
-            original.trim().replace( /- /, '' )
+            original.trim().replace( /- /g, '' )
         );
 
     });
@@ -69,9 +69,9 @@ $( document ).ready( function() {
             originalAuthors.split( /,|\s*and\s+/ )
                 .map( function( a ) {
                     return a.trim()
-                        .replace( /\*/, '' )
-                        .replace( /^\d+|\d+$/, '' )
-                        .replace( /^and\s*/, '' )
+                        .replace( /\*/g, '' )
+                        .replace( /^\d+|\d+$/g, '' )
+                        .replace( /^and\s*/g, '' )
                         .trim();
                 }).filter( function( a ) {
                     return !!a;
