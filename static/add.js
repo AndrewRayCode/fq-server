@@ -61,9 +61,18 @@ $( document ).ready( function() {
             $authors.val() || ''
         ).trim().replace( /\.$/, '' );
 
-        $authors.val( originalAuthors.split( ',' ).map( function( a ) {
-            return a.trim().replace( /^\d+|\d+$/, '' );
-        }).join(', ') );
+        $authors.val(
+            originalAuthors.split( /,|\s*and\s+/ )
+                .map( function( a ) {
+                    return a.trim()
+                        .replace( /\*/, '' )
+                        .replace( /^\d+|\d+$/, '' )
+                        .replace( /^and\s*/, '' )
+                        .trim();
+                }).filter( function( a ) {
+                    return !!a;
+                }).join(', ')
+        );
 
     });
 

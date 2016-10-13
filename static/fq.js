@@ -64,7 +64,7 @@ function formatStudy( study ) {
                     <b>Abstract:</b> ${ showMoreify( study.abstract ) }
                 </p>
                 <p>
-                    <b>Conclusions:</b> ${ study.conclusions.replace( /\n/g, '<br />' ) }
+                    <b>Sample of Conclusions:</b> ${ study.conclusions.replace( /\n/g, '<br />' ) }
                 </p>
                 <p>
                     <b>Keywords:</b> ${ study.keywords.map( kw => formatKeywordInline( kw ) ).join(', ') }
