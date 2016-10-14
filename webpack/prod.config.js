@@ -28,7 +28,7 @@ module.exports = {
     path: assetsPath,
     filename: '[name]-[chunkhash].js',
     chunkFilename: '[name]-[chunkhash].js',
-    publicPath: '/dist/'
+    publicPath: 'https://s3-us-west-2.amazonaws.com/fqs/'
   },
   module: {
     loaders: [
