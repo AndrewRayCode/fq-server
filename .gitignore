@@ -1,8 +1,7 @@
 .idea/
 node_modules/
+dist/
 *.iml
+webpack-assets.json
+webpack-stats.json
 npm-debug.log
-.vscode
-.DS_Store
-content/
-uploads/
