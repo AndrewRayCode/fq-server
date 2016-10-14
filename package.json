@@ -6,6 +6,7 @@
   "private": true,
   "main": "bin/server.js",
   "scripts": {
+    "deploy": "./scripts/deploy.sh",
     "start": "concurrent --kill-others \"npm run start-prod\" \"npm run start-prod-api\"",
     "start-prod": "better-npm-run start-prod",
     "start-prod-api": "better-npm-run start-prod-api",
