@@ -4,6 +4,11 @@ var fs = require( 'fs' );
 var bodyParser = require( 'body-parser' );
 var multer  = require( 'multer' )
 
+console.log( 'WTF HELL IS REAL' );
+console.log( 'WTF HELL IS REAL' );
+console.log( 'WTF HELL IS REAL' );
+console.log( 'WTF HELL IS REAL' );
+
 var file = './content/db.db';
 var exists = fs.existsSync( file );
 

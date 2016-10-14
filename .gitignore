@@ -5,3 +5,5 @@ dist/
 webpack-assets.json
 webpack-stats.json
 npm-debug.log
+config/db.dev.js
+config/db.prod.js
