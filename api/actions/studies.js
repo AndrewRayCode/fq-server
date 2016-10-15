@@ -37,7 +37,7 @@ function searchStudiesQuery( search ) {
                 id: row.id,
                 title: row.title,
                 includesFQs: !!row.includesFQs,
-                fullText: row.fullText,
+                fulltext: row.fulltext,
                 year: row.year,
                 month: row.month,
                 conclusions: row.conclusions,
@@ -107,7 +107,7 @@ export function add( req ) {
     const includesFqs = req.body.includesFqs;
     const conclusions = req.body.conclusions;
     const abstract = req.body.abstract;
-    const fullText = fileName ? '/uploads/' + fileName : req.body.fullText;
+    const fulltext = fileName ? '/uploads/' + fileName : req.body.fulltext;
 
     const authors = req.body.authors.split(',').map( author => {
         return author.trim();
@@ -235,7 +235,7 @@ export function add( req ) {
             return db.insert({
                 title: title,
                 includesFqs: includesFqs ? 1 : 0,
-                fullText: fullText,
+                fulltext: fulltext,
                 month: month,
                 year: year,
                 conclusions: conclusions,

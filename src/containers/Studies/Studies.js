@@ -158,7 +158,7 @@ export default class Studies extends Component {
                                 <div className={ styles.title }>{ study.title }</div>
                                 <ul className={ styles.subTitle }>
                                     <li>
-                                        <a href={ study.fullText } target="_blank">Full Text</a>
+                                        <a href={ study.fulltext } target="_blank">Full Text</a>
                                     </li>
                                     <li>
                                         <b>Authors:</b> { study.authors.map( a => formatAuthor( a ) ).join(', ') }
