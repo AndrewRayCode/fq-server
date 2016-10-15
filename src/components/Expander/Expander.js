@@ -58,10 +58,12 @@ export default class Expander extends Component {
         const styles = require( './Expander.scss' );
         const { isOpen, } = this.state;
 
-        return <span className={ styles.expander }
+        return <span
+                className={ styles.expander }
             >
             <span
                 ref="expander"
+                className={ styles.trigger }
                 onClick={ this.onClick }
             >
                 { this.props.children }

@@ -18,14 +18,32 @@ export default class Login extends Component {
         const styles = require('./Login.scss');
 
         return <div className={ styles.loginForm }>
-            <form className="login-form form-inline" onSubmit={ this.handleSubmit }>
-                <div className="form-group">
-                    <label htmlFor="username">Username or email</label>
-                    <input id="username" type="text" ref="username" placeholder="Username or email" className="form-control"/>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Username or email</label>
-                    <input id="password" type="password" placeholder="password" ref="password" className="form-control"/>
+            <form onSubmit={ this.handleSubmit }>
+                <div className="row">
+                    <div className="col-md-6">
+                        <label htmlFor="username">Username or email</label>
+                        <div className="form-group">
+                            <input
+                                id="username"
+                                type="text"
+                                ref="username"
+                                placeholder="Username or email"
+                                className="form-control"
+                            />
+                        </div>
+                    </div>
+                    <div className="col-md-6">
+                        <label htmlFor="password">Password</label>
+                        <div className="form-group">
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder="password"
+                                ref="password"
+                                className="form-control"
+                            />
+                        </div>
+                    </div>
                 </div>
                 <button className="btn btn-success" onClick={this.handleSubmit}>
                     <i className="fa fa-sign-in"/>{' '}Log In
