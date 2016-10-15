@@ -105,15 +105,25 @@ export function signup( req ) {
 
             }).then( user => {
 
-                req.logIn( user, loginError => {
-                    if( loginError ) {
-                        throw ( loginError );
-                    } else {
-                        resolve({
+                return new Promise( ( aResolve, aReject ) => {
+
+                    req.logIn( user, loginError => {
+
+                        if( loginError ) {
+                            return aReject( loginError );
+                        }
+
+                        aResolve({
                             id: user.id
                         });
-                    }
+
+                    });
+
                 });
+
+            }).then( created => {
+
+                resolve( created );
 
             }).catch( error => {
                 console.error( 'Signup error', error );
@@ -122,4 +132,8 @@ export function signup( req ) {
 
     });
 
+}
+
+export default function loadAuth( req ) {
+    return Promise.resolve( req.user || null );
 }

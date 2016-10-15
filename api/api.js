@@ -11,6 +11,8 @@ import db from '../src/db';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
+import cookieParser from 'cookie-parser';
+import memcachedStore from 'connect-memcached';
 
 const pretty = new PrettyError();
 const app = express();
@@ -19,10 +21,13 @@ const server = new http.Server(app);
 const fileUploadSizeLimit = '10mb';
 
 app.use(session({
-    secret: 'react and redux rule!!!!',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 60000 }
+    secret: 'keyboard cat',
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 60000 },
+    store: new ( memcachedStore( session ) )({
+        hosts: [ '127.0.0.1:11211' ],
+    })
 }));
 
 app.use( bodyParser.json({ limit: fileUploadSizeLimit }) );
@@ -30,6 +35,7 @@ app.use( bodyParser.urlencoded({
     extended: true,
     limit: fileUploadSizeLimit
 }) );
+app.use( cookieParser() );
 
 app.use( passport.initialize() );
 app.use( passport.session() );
@@ -52,7 +58,6 @@ passport.use( new LocalStrategy(
                 bcrypt.compare( password, encrypted_password, ( err, res ) => {
 
                     if( err ) {
-                        console.error( 'Password error: ', err, err.message );
                         done( new Error( 'Unknown error' ) );
                     }
 
