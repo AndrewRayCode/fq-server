@@ -1,16 +1,18 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { IndexLink } from 'react-router';
-import { LinkContainer } from 'react-router-bootstrap';
-import Navbar from 'react-bootstrap/lib/Navbar';
-import Nav from 'react-bootstrap/lib/Nav';
-import NavItem from 'react-bootstrap/lib/NavItem';
 import Helmet from 'react-helmet';
-import { isLoaded as isInfoLoaded, load as loadInfo } from 'redux/modules/info';
-import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
+import { Dropdown, Expander, Login, } from 'components';
+import {
+    isLoaded as isInfoLoaded, load as loadInfo
+} from 'redux/modules/info';
+import {
+    isLoaded as isAuthLoaded, load as loadAuth, logout, login
+} from 'redux/modules/auth';
 import { push } from 'react-router-redux';
 import config from '../../config';
 import { asyncConnect } from 'redux-async-connect';
+import * as authActions from 'redux/modules/auth';
 
 @asyncConnect([{
     promise: ( { store: { dispatch, getState } } ) => {
@@ -28,7 +30,7 @@ import { asyncConnect } from 'redux-async-connect';
 }])
 @connect(
     state => ({ user: state.auth.user }),
-    { logout, pushState: push }
+    { loginAction: login, logout, pushState: push }
 )
 export default class App extends Component {
 
@@ -43,16 +45,6 @@ export default class App extends Component {
         store: PropTypes.object.isRequired
     };
 
-    componentWillReceiveProps(nextProps) {
-        if (!this.props.user && nextProps.user) {
-            // login
-            this.props.pushState('/loginSuccess');
-        } else if (this.props.user && !nextProps.user) {
-            // logout
-            this.props.pushState('/');
-        }
-    }
-
     handleLogout = (event) => {
         event.preventDefault();
         this.props.logout();
@@ -60,32 +52,56 @@ export default class App extends Component {
 
     render() {
 
-        const { user, } = this.props;
-        const styles = require('./App.scss');
+        const { user, loginAction, } = this.props;
+        const styles = require( './App.scss' );
 
         return <div className={ styles.app }>
             <Helmet { ...config.app.head } />
-            <Navbar fixedTop>
-                <Navbar.Header>
-                    <Navbar.Brand>
-                        <IndexLink to="/" activeStyle={{ color: '#33e0ff' }}>
-                            <div className={styles.brand} />
-                            <span>FQ Site</span>
-                        </IndexLink>
-                    </Navbar.Brand>
-                    <Navbar.Toggle/>
-                </Navbar.Header>
 
-                <Navbar.Collapse eventKey={0}>
-                    <Nav navbar>
-                        <LinkContainer to="/studies">
-                            <NavItem eventKey={2}>Studies</NavItem>
-                        </LinkContainer>
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
+            <div className={ styles.header }>
 
-            <div className={ styles.appContent }>
+                <div className={ styles.content }>
+
+                    <a href="/" className={ styles.logo }>FQ Research</a>
+
+                    <div className={ styles.nav }>
+                        <a href="/studies">Studies</a>
+                    </div>
+
+                    <ul className={ styles.auth }>
+
+                        { user ? <li>
+                            <Dropdown
+                                items={[
+                                    <a onClick={ logout }>Log out</a>
+                                ]}
+                            >
+                                Hi, { user.name }!
+                            </Dropdown>
+                        </li> : [
+                            <li key={ 0 }>
+                                <Expander
+                                    expanded={ <Login
+                                        login={ login }
+                                    /> }
+                                >
+                                    Log in
+                                </Expander>
+                            </li>,
+                            <li key={ 1 }>
+                                <a href="/signup">
+                                    Join Us!
+                                </a>
+                            </li>,
+                        ] }
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <div className={ styles.appContent + ' clearfix' }>
                 { this.props.children }
             </div>
 

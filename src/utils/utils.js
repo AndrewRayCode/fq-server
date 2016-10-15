@@ -14,3 +14,14 @@ export function guid() {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4();
 }
+
+export function hasDOMParent( child, parent ) {
+    let node = child.parentNode;
+    while( node !== null ) {
+        if( node === parent ) {
+            return true;
+        }
+        node = node.parentNode;
+    }
+    return false;
+}

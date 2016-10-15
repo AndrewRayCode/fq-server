@@ -84,12 +84,13 @@ export default class Studies extends Component {
     render() {
 
         const styles = require( './Studies.scss' );
+        const appStyles = require( '../App/App.scss' );
 
         const { studies, inactiveKeywords, activeKeywords, } = this.props;
 
         return <div>
-            <h1>
-                Studies
+            <h1 className={ appStyles.pageTitle }>
+                Fluorquinolone Studies ({ studies.length })
             </h1>
 
             <Helmet title="Studies" />
@@ -141,7 +142,7 @@ export default class Studies extends Component {
                         }}
                     >
                         { keyword }
-                        <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        <span className="glyphicon glyphicon-remove" aria-hidden="true" />
                     </button>
                 )}
 

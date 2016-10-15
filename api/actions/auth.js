@@ -134,6 +134,16 @@ export function signup( req ) {
 
 }
 
-export default function loadAuth( req ) {
+export function load( req ) {
     return Promise.resolve( req.user || null );
+}
+
+export function logout( req ) {
+
+    if( req.user ) {
+        return Promise.resolve({ success: true });
+    } else {
+        return Promise.reject({ error: 'You are not logged in' });
+    }
+
 }

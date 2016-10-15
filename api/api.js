@@ -24,7 +24,6 @@ app.use(session({
     secret: 'keyboard cat',
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 60000 },
     store: new ( memcachedStore( session ) )({
         hosts: [ '127.0.0.1:11211' ],
     })
