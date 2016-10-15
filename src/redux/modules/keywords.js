@@ -14,7 +14,8 @@ const initialState = {
 };
 
 export default function reducer( state = initialState, action = {} ) {
-    switch (action.type) {
+
+    switch ( action.type ) {
         case LOAD: {
             return {
                 ...state,
@@ -99,7 +100,7 @@ export function isLoaded( globalState ) {
 export function load() {
     return {
         types: [ LOAD, LOAD_SUCCESS, LOAD_FAIL ],
-        promise: client => client.get('/keywords/keywords')
+        promise: client => client.get( '/studies/getAllKeywords' )
     };
 }
 

@@ -96,10 +96,10 @@ export function isLoaded( globalState ) {
   return globalState.studies && globalState.studies.loaded;
 }
 
-export function load() {
+export function search( params ) {
     return {
         types: [ LOAD, LOAD_SUCCESS, LOAD_FAIL ],
-        promise: client => client.get('/studies/studies')
+        promise: client => client.get( '/studies/searchStudies', params )
     };
 }
 

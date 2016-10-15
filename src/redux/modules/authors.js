@@ -1,11 +1,11 @@
-const LOAD = 'redux-example/keywords/LOAD';
-const LOAD_SUCCESS = 'redux-example/keywords/LOAD_SUCCESS';
-const LOAD_FAIL = 'redux-example/keywords/LOAD_FAIL';
-const EDIT_START = 'redux-example/keywords/EDIT_START';
-const EDIT_STOP = 'redux-example/keywords/EDIT_STOP';
-const SAVE = 'redux-example/keywords/SAVE';
-const SAVE_SUCCESS = 'redux-example/keywords/SAVE_SUCCESS';
-const SAVE_FAIL = 'redux-example/keywords/SAVE_FAIL';
+const LOAD = 'redux-example/authors/LOAD';
+const LOAD_SUCCESS = 'redux-example/authors/LOAD_SUCCESS';
+const LOAD_FAIL = 'redux-example/authors/LOAD_FAIL';
+const EDIT_START = 'redux-example/authors/EDIT_START';
+const EDIT_STOP = 'redux-example/authors/EDIT_STOP';
+const SAVE = 'redux-example/authors/SAVE';
+const SAVE_SUCCESS = 'redux-example/authors/SAVE_SUCCESS';
+const SAVE_FAIL = 'redux-example/authors/SAVE_FAIL';
 
 const initialState = {
   loaded: false,
@@ -93,13 +93,13 @@ export default function reducer( state = initialState, action = {} ) {
 }
 
 export function isLoaded( globalState ) {
-  return globalState.keywords && globalState.keywords.loaded;
+  return globalState.authors && globalState.authors.loaded;
 }
 
 export function load() {
     return {
         types: [ LOAD, LOAD_SUCCESS, LOAD_FAIL ],
-        promise: client => client.get('/keywords/authors')
+        promise: client => client.get( '/studies/getAuthors' )
     };
 }
 

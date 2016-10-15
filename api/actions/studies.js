@@ -1,12 +1,12 @@
 import db from '../../src/db';
 
 function objectValues( obj ) {
-    return Object.keys( obj ).map( function( key ) { return obj[ key  ]; });
+    return Object.keys( obj ).map( key => obj[ key ] );
 }
 
-function searchStudies( search ) {
+function searchStudiesQuery( search ) {
 
-    var query = db( 'studies' )
+    let query = db( 'studies' )
         .select( 'studies.*' )
 
         .select( db.raw( 'ARRAY_AGG( DISTINCT keywords.id ) as keyword_ids' ) )
@@ -19,20 +19,19 @@ function searchStudies( search ) {
         .leftJoin( 'study_authors', 'study_authors.study_id', 'studies.id' )
         .leftJoin( 'authors', 'study_authors.author_id', 'authors.id'  )
 
-        .groupBy( 'studies.id' )
+        .groupBy( 'studies.id' );
 
     if( 'keywords' in search ) {
         query = query.whereIn( 'keywords.id', search.keywords );
     }
 
-    return query.then( function( rows ) {
-        return rows.map( function( row ) {
+    return query.then( rows => {
+        return rows.map( row => {
 
-            console.log('got',row);
-            var keyword_ids = row.keyword_ids;
-            var keyword_names = row.keyword_names;
-            var author_ids = row.author_ids;
-            var author_names = row.author_names;
+            const keywordIds = row.keyword_ids;
+            const keywordNames = row.keyword_names;
+            const authorIds = row.author_ids;
+            const authorNames = row.author_names;
 
             return {
                 id: row.id,
@@ -47,17 +46,17 @@ function searchStudies( search ) {
                 // I don't know why the above query returns dupe keywords,
                 // authors, etc. tried adding DISTINCT to the ARRAY_AGG
                 // functions but it just errors. De-dupe and deserialize
-                keywords: objectValues( keyword_ids.reduce( function( memo, id, index ) {
+                keywords: objectValues( keywordIds.reduce( ( memo, id, index ) => {
                     memo[ id ] = {
                         id: id,
-                        name: keyword_names[ index ],
+                        name: keywordNames[ index ],
                     };
                     return memo;
                 }, {} ) ),
-                authors: objectValues( author_ids.reduce( function( memo, id, index ) {
+                authors: objectValues( authorIds.reduce( ( memo, id, index ) => {
                     memo[ id ] = {
                         id: id,
-                        name: author_names[ index ],
+                        name: authorNames[ index ],
                     };
                     return memo;
                 }, {} ) ),
@@ -67,7 +66,7 @@ function searchStudies( search ) {
 
 }
 
-function getKeywords( query ) {
+function getKeywordsQuery( query ) {
     const normalizedQuery = query || '';
     return db.select( 'keywords.*' )
         .select( db.raw( 'COUNT( keywords.id ) as study_count' ) )
@@ -78,7 +77,7 @@ function getKeywords( query ) {
         .orWhere( 'name', 'ilike', `%${ normalizedQuery }%` );
 }
 
-function getAuthors( query ) {
+function getAuthorsQuery( query ) {
     const normalizedQuery = query || '';
     return db.select( 'authors.*' )
         .select( db.raw( 'COUNT( authors.id ) as study_count' ) )
@@ -93,7 +92,7 @@ function doesStudyExistWithTitle( title ) {
     return db.select( 'id' )
         .from( 'studies' )
         .where( 'title', 'ilike', `${ title }%` )
-        .then( function( row ) {
+        .then( row => {
             return row.length ? row[ 0 ].id : null;
         });
 }
@@ -110,10 +109,10 @@ export function add( req ) {
     const abstract = req.body.abstract;
     const fullText = fileName ? '/uploads/' + fileName : req.body.fullText;
 
-    const authors = req.body.authors.split(',').map( function( author ) {
+    const authors = req.body.authors.split(',').map( author => {
         return author.trim();
     });
-    const keywords = req.body.keywords.split(',').map( function( keyword ) {
+    const keywords = req.body.keywords.split(',').map( keyword => {
         return keyword.trim();
     });
 
@@ -121,40 +120,40 @@ export function add( req ) {
     db.select( 'id' )
         .from( 'studies' )
         .where( 'title', title )
-        .then( function( result ) {
+        .then( result => {
 
             if( result.length > 0 ) {
                 throw new Error( 'A study with this title has already been indexed' );
             }
 
         // Find any existing author ids, building { name: id } object
-        }).then( function() {
+        }).then( () => {
 
             return db.select( 'name', 'id' )
                 .from( 'authors' )
                 .whereIn( 'name', authors )
-                .then( function( rows ) {
-                    return rows.reduce( function( memo, row ) {
-                        var newRow = {};
+                .then( rows => {
+                    return rows.reduce( ( memo, row ) => {
+                        const newRow = {};
                         newRow[ row.name ] = row.id;
                         return Object.assign( {}, memo, newRow );
-                    }, {} )
-                })
+                    }, {} );
+                });
 
         // Create any new authors
-        }).then( function( existingAuthors ) {
+        }).then( existingAuthors => {
 
             // Find author names that aren't in the db already
-            const newAuthors = authors.filter( function( name ) {
+            const newAuthors = authors.filter( name => {
                 return !( name in existingAuthors );
             });
 
             // Create them all
-            return Promise.all( newAuthors.map( function( name ) {
+            return Promise.all( newAuthors.map( name => {
                 return db.insert({ name: name })
                     .returning([ 'name', 'id' ])
                     .into( 'authors' )
-                    .then( function( row ) {
+                    .then( row => {
                         return {
                             name: name,
                             id: row[ 0 ],
@@ -162,10 +161,10 @@ export function add( req ) {
                     });
             // Build the full list of all authors, merging the newly inserted
             // ones with the existing list
-            }) ).then( function( insertedAuthors ) {
+            }) ).then( insertedAuthors => {
                 return Object.assign(
                     {},
-                    insertedAuthors.reduce( function( memo, author ) {
+                    insertedAuthors.reduce( ( memo, author ) => {
                         memo[ author.name ] = author.id;
                         return memo;
                     }, {} ),
@@ -174,40 +173,40 @@ export function add( req ) {
             });
 
         // Find any existing keyword ids, building { name: id } object
-        }).then( function( authors ) {
+        }).then( authorQueryResult => {
 
             return db.select( 'name', 'id' )
                 .from( 'keywords' )
                 .whereIn( 'name', keywords )
-                .then( function( rows ) {
-                    return rows.reduce( function( memo, row ) {
-                        var newRow = {};
+                .then( rows => {
+                    return rows.reduce( ( memo, row ) => {
+                        const newRow = {};
                         newRow[ row.name ] = row.id;
                         return Object.assign( {}, memo, newRow );
-                    }, {} )
-                }).then( function( existingKeywords ) {
+                    }, {} );
+                }).then( existingKeywords => {
                     return {
                         existingKeywords: existingKeywords,
-                        authors: authors,
+                        authors: authorQueryResult,
                     };
                 });
 
         // Create any new keywords
-        }).then( function( continuation ) {
+        }).then( continuation => {
 
             const existingKeywords = continuation.existingKeywords;
 
             // Find author names that aren't in the db already
-            const newKeywords = keywords.filter( function( name ) {
+            const newKeywords = keywords.filter( name => {
                 return !( name in existingKeywords );
             });
 
             // Create them all
-            return Promise.all( newKeywords.map( function( name ) {
+            return Promise.all( newKeywords.map( name => {
                 return db.insert({ name: name })
                     .returning([ 'name', 'id' ])
                     .into( 'keywords' )
-                    .then( function( row ) {
+                    .then( row => {
                         return {
                             name: name,
                             id: row[ 0 ],
@@ -215,23 +214,23 @@ export function add( req ) {
                     });
             // Build the full list of all authors, merging the newly inserted
             // ones with the existing list
-            }) ).then( function( insertedKeywords ) {
+            }) ).then( insertedKeywords => {
                 return Object.assign(
                     {},
-                    insertedKeywords.reduce( function( memo, author ) {
+                    insertedKeywords.reduce( ( memo, author ) => {
                         memo[ author.name ] = author.id;
                         return memo;
                     }, {} ),
                     existingKeywords
                 );
-            }).then( function( keywords ) {
+            }).then( keywordResults => {
                 return Object.assign( {}, continuation, {
-                    keywords: keywords,
+                    keywords: keywordResults,
                 });
             });
 
         // Create the actual study, get the id and pass authors
-        }).then( function( continuation ) {
+        }).then( continuation => {
 
             return db.insert({
                 title: title,
@@ -243,7 +242,7 @@ export function add( req ) {
                 abstract: abstract
             }).into( 'studies' )
                 .returning( 'id' )
-                .then(function( studyRow ) {
+                .then( studyRow => {
 
                     return Object.assign( {}, continuation, {
                         studyId: studyRow[ 0 ],
@@ -252,36 +251,33 @@ export function add( req ) {
                 });
 
         // Populate the keyword-study join table
-        }).then( function( continuation ) {
+        }).then( continuation => {
 
-            const keywords = continuation.keywords;
-            const studyId = continuation.studyId;
+            const kws = continuation.keywords;
+            const sids = continuation.studyId;
 
-            return Promise.all( Object.keys( keywords ).map( function( name ) {
+            return Promise.all( Object.keys( kws ).map( name => {
                 return db.insert({
-                    study_id: studyId,
+                    study_id: sids,
                     keyword_id: keywords[ name ],
                 }).into( 'study_keywords' );
-            }) ).then( function() {
+            }) ).then( () => {
                 return continuation;
             });
 
         // Populate the author-study join table
-        }).then( function( continuation ) {
+        }).then( continuation => {
 
-            const authors = continuation.authors;
+            const as = continuation.authors;
             const studyId = continuation.studyId;
 
-            return Promise.all( Object.keys( authors ).map( function( name ) {
+            return Promise.all( Object.keys( as ).map( name => {
                 return db.insert({
                     study_id: studyId,
                     author_id: authors[ name ],
                 }).into( 'study_authors' );
-            }) ).then( function() {
-                return continuation;
-            });
-
-        }).then( function( continuation ) {
+            }) ).then( () => continuation );
+        }).then( continuation => {
 
             return { success: true };
 
@@ -289,11 +285,17 @@ export function add( req ) {
 
 }
 
-export function keywords( req ) {
+export function getAllKeywords( req ) {
+
+    return getKeywordsQuery( '' );
+
+}
+
+export function searchKeywords( req ) {
 
     const query = ( req.query && req.query.query ) || '';
 
-    return getKeywords( query ).then( function( keywords ) {
+    return getKeywordsQuery( query ).then( keywords => {
         return {
             query: query,
             suggestions: keywords
@@ -302,15 +304,21 @@ export function keywords( req ) {
 
 }
 
-export function authors( req ) {
+export function getAllAuthors( req ) {
+
+    return getAuthorsQuery( '' );
+
+}
+
+export function getAuthors( req ) {
 
     const query = ( req.query && req.query.query ) || '';
 
-    return getAuthors( query ).then( function( authors ) {
+    return getAuthorsQuery( query ).then( authors => {
         return {
             query: query,
             suggestions: authors
-        }
+        };
     });
 
 }
@@ -319,7 +327,7 @@ export function checkTitle( req ) {
 
     const title = req.query && req.query.title;
 
-    return doesStudyExistWithTitle( title ).then( function( exists ) {
+    return doesStudyExistWithTitle( title ).then( exists => {
 
         return { existingId: exists };
 
@@ -329,34 +337,34 @@ export function checkTitle( req ) {
 
 export function getSiteData() {
 
-    return getKeywords().then( function( keywords ) {
+    return getKeywordsQuery().then( keywords => {
         return { keywords: keywords };
-    }).then( function( continuation ) {
+    }).then( continuation => {
 
-        return getAuthors().then( function( authors ) {
+        return getAuthors().then( authors => {
 
             return Object.assign( {}, continuation, {
                 authors: authors,
-            })
+            });
 
         });
 
-    }).then( function( continuation ) {
+    }).then( continuation => {
 
-        return db( 'studies' ).count( '* as count' ).then( function( row ) {
+        return db( 'studies' ).count( '* as count' ).then( row => {
 
             return Object.assign( {}, continuation, {
                 totalStudies: row[ 0 ].count,
-            })
+            });
 
-        })
+        });
 
     });
 
 }
 
-export function studies( req ) {
+export function searchStudies( req ) {
 
-    return searchStudies( req.query );
+    return searchStudiesQuery( req.query );
 
 }

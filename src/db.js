@@ -5,6 +5,5 @@ const configFile = `db.${ env }.js`;
 
 export default knex({
     client: 'postgres',
-    debug: true,
     connection: require( `../config/${ configFile }` )
 });
