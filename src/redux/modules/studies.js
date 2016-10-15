@@ -99,7 +99,7 @@ export function isLoaded( globalState ) {
 export function search( params ) {
     return {
         types: [ LOAD, LOAD_SUCCESS, LOAD_FAIL ],
-        promise: client => client.get( '/studies/searchStudies', params )
+        promise: client => client.get( '/studies/searchStudies', { params } )
     };
 }
 

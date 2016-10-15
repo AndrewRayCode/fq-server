@@ -22,7 +22,7 @@ function searchStudiesQuery( search ) {
         .groupBy( 'studies.id' );
 
     if( 'keywords' in search ) {
-        query = query.whereIn( 'keywords.id', search.keywords );
+        query = query.whereIn( 'keywords.name', search.keywords );
     }
 
     return query.then( rows => {

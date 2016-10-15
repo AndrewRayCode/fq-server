@@ -1,35 +1,37 @@
-.widgets {
-  .refreshBtn {
-    margin-left: 20px;
-  }
-  .idCol {
-    width: 5%;
-  }
-  .colorCol {
-    width: 20%;
-  }
-  .sprocketsCol {
-    width: 20%;
-    text-align: right;
-    input {
-      text-align: right;
-    }
-  }
-  .ownerCol {
-    width: 30%;
-  }
-  .buttonCol {
-    width: 25%;
-    :global(.btn) {
-      margin: 0 5px;
-    }
-  }
-  tr.saving {
-    opacity: 0.8;
-    :global(.btn) {
-      &[disabled] {
-        opacity: 1;
-      }
-    }
-  }
+.studies {
+    list-style:none;
+    margin:0;
+    padding:0;
 }
+
+.study {
+    margin:10px 0 0;
+    padding:0;
+}
+
+.study .title {
+    color:#905840;
+	font-size:22px;
+	font-weight:bold;
+}
+
+.study .subTitle {
+	list-style:none;
+	margin:0 0 10px;
+	padding:0;
+	font-size:12px;
+	color:#666;
+}
+
+.study .subTitle li {
+	display:inline;
+	margin:0 12px 0 0;
+	padding:0 12px 0 0;
+	border-right:1px solid #aaa;
+}
+
+.study .subTitle li:last-child {
+	border-right:none;
+	margin:0;
+}
+
