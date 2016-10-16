@@ -9,11 +9,23 @@
 
 .expanded {
     background:#fff;
-    box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.4 );
+    box-shadow:0 2px 8px rgba( 0, 0, 0, 0.4 );
     border-radius:8px;
     padding:20px;
     z-index:990;
     position:absolute;
     top:28px;
     right:-20px;
+
+    &:before {
+        content:"";
+        position:absolute;
+        top:-8px;
+        right:33px;
+        width:0;
+        height:0;
+        border-left:8px solid transparent;
+        border-right:8px solid transparent;
+        border-bottom:8px solid #fff;
+    }
 }

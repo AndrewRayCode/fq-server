@@ -29,6 +29,7 @@ html, body {
     border:1px solid #ddd;
     background:#fff;
     border-radius:4px;
+    min-height:200px;
 
     .pageTitle {
         color:#73626E;
@@ -45,6 +46,7 @@ html, body {
     box-shadow:0 0 4px #110E1A;
     position:relative;
     z-index:2;
+    border-bottom:1px solid #D3D2DE;
 
     .content {
         width:760px;
@@ -121,6 +123,27 @@ html, body {
             text-decoration:none;
         }
 
+    }
+
+}
+
+.footer {
+
+    color:#fff;
+    background:linear-gradient( #716E7A, #413E4A );
+    border-top:1px solid #D3D2DE;
+    box-shadow:0 0 6px rgba( 0, 0, 0, 0.4 );
+    min-height:200px;
+
+    .content {
+        text-shadow:-1px -1px 0 #312E3A;
+        padding:20px 0;
+        width:760px;
+        margin:0 auto;
+        
+        a {
+            color:#F7E4BE;
+        }
     }
 
 }

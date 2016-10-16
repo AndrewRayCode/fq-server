@@ -12,7 +12,7 @@ const initialState = {
     loaded: false
 };
 
-export default function reducer(state = initialState, action = {}) {
+export default function reducer( state = initialState, action = {} ) {
 
     switch( action.type ) {
         case LOAD:
@@ -75,31 +75,29 @@ export default function reducer(state = initialState, action = {}) {
 
 }
 
-export function isLoaded(globalState) {
+export function isLoaded( globalState ) {
     return globalState.auth && globalState.auth.loaded;
 }
 
 export function load() {
     return {
         types: [ LOAD, LOAD_SUCCESS, LOAD_FAIL ],
-        promise: (client) => client.get( '/auth/load' )
+        promise: client => client.get( '/auth/load' )
     };
 }
 
-export function login(name) {
+export function login( usernameOrEmail, password ) {
     return {
-        types: [LOGIN, LOGIN_SUCCESS, LOGIN_FAIL],
-        promise: (client) => client.post( '/login', {
-            data: {
-                name: name
-            }
+        types: [ LOGIN, LOGIN_SUCCESS, LOGIN_FAIL ],
+        promise: client => client.post( '/auth/login', {
+            data: { usernameOrEmail, password, }
         })
     };
 }
 
 export function logout() {
     return {
-        types: [LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL],
-        promise: (client) => client.get('/logout')
+        types: [ LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL ],
+        promise: client => client.get('/logout')
     };
 }

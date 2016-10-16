@@ -8,51 +8,44 @@ import {
     Widgets,
     Studies,
     About,
-    Login,
-    LoginSuccess,
+    Signup,
     Survey,
     NotFound,
 } from 'containers';
 
-export default (store) => {
-  const requireLogin = (nextState, replace, cb) => {
-    function checkAuth() {
-      const { auth: { user }} = store.getState();
-      if (!user) {
-        // oops, not logged in, so can't be here!
-        replace('/');
-      }
-      cb();
-    }
+export default store => {
 
-    if (!isAuthLoaded(store.getState())) {
-      store.dispatch(loadAuth()).then(checkAuth);
-    } else {
-      checkAuth();
-    }
-  };
+    const requireLogin = (nextState, replace, cb) => {
+        function checkAuth() {
+            const { auth: { user }} = store.getState();
+            if (!user) {
+                // oops, not logged in, so can't be here!
+                replace('/');
+            }
+            cb();
+        }
 
-  /**
-   * Please keep routes in alphabetical order
-   */
-  return <Route path="/" component={ App } >
-      { /* Home (main) route */ }
-      <IndexRoute component={ Home } />
+        if (!isAuthLoaded(store.getState())) {
+            store.dispatch(loadAuth()).then(checkAuth);
+        } else {
+            checkAuth();
+        }
+    };
 
-      { /* Routes requiring login */ }
-      <Route onEnter={ requireLogin } >
-          <Route path="chat" component={ Chat } />
-          <Route path="loginSuccess" component={ LoginSuccess } />
-      </Route>
+    /**
+     * Please keep routes in alphabetical order
+     */
+    return <Route path="/" component={ App } >
+        { /* Home (main) route */ }
+        <IndexRoute component={ Home } />
 
-      { /* Routes */ }
-      <Route path="about" component={ About } />
-      <Route path="login" component={ Login } />
-      <Route path="survey" component={ Survey } />
-      <Route path="widgets" component={ Widgets } />
-      <Route path="studies" component={ Studies } />
+        { /* Routes */ }
+        <Route path="about" component={ About } />
+        <Route path="signup" component={ Signup } />
+        <Route path="studies" component={ Studies } />
 
-      { /* Catch all route */ }
-      <Route path="*" component={ NotFound } status={ 404 } />
-  </Route>;
+        { /* Catch all route */ }
+        <Route path="*" component={ NotFound } status={ 404 } />
+    </Route>;
+
 };

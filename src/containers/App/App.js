@@ -14,7 +14,7 @@ import config from '../../config';
 import { asyncConnect } from 'redux-async-connect';
 import * as authActions from 'redux/modules/auth';
 
-@asyncConnect([{
+@asyncConnect( [{
     promise: ( { store: { dispatch, getState } } ) => {
         const promises = [];
 
@@ -27,19 +27,15 @@ import * as authActions from 'redux/modules/auth';
 
         return Promise.all(promises);
     }
-}])
+}] )
 @connect(
-    state => ({ user: state.auth.user }),
+    state => ({
+        user: state.auth.user,
+        loginError: state.auth.loginError,
+    }),
     { loginAction: login, logout, pushState: push }
 )
 export default class App extends Component {
-
-    static propTypes = {
-        children: PropTypes.object.isRequired,
-        user: PropTypes.object,
-        logout: PropTypes.func.isRequired,
-        pushState: PropTypes.func.isRequired
-    };
 
     static contextTypes = {
         store: PropTypes.object.isRequired
@@ -52,7 +48,7 @@ export default class App extends Component {
 
     render() {
 
-        const { user, loginAction, } = this.props;
+        const { user, loginAction, loginError } = this.props;
         const styles = require( './App.scss' );
 
         return <div className={ styles.app }>
@@ -82,7 +78,8 @@ export default class App extends Component {
                             <li key={ 0 }>
                                 <Expander
                                     expanded={ <Login
-                                        login={ login }
+                                        login={ loginAction }
+                                        error={ loginError }
                                     /> }
                                 >
                                     Log in
@@ -105,11 +102,10 @@ export default class App extends Component {
                 { this.props.children }
             </div>
 
-            <div className="well text-center">
-                Have questions? Ask for help <a
-                    href="https://github.com/erikras/react-redux-universal-hot-example/issues"
-                    target="_blank">on Github</a> or in the <a
-                    href="https://discord.gg/0ZcbPKXt5bZZb1Ko" target="_blank">#react-redux-universal</a> Discord channel.
+            <div className={ styles.footer }>
+                <div className={ styles.content }>
+                    Website by <a href="https://twitter.com/andrewray" target="_blank">@andrewray</a>
+                </div>
             </div>
         </div>;
 

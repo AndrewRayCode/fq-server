@@ -5,22 +5,28 @@ import bcrypt from 'bcrypt';
 
 export function login( req ) {
 
+    const { usernameOrEmail, password, } = req.body;
+
+    if( !usernameOrEmail || !password ) {
+        return reject({ error: 'Please enter your username or email, and your password.' });
+    }
+
     return new Promise( ( resolve, reject ) => {
 
         passport.authenticate( 'local', function authenticate( err, user, info ) {
 
             if( err ) {
-                return reject( err );
+                return reject({ error: err.message });
             }
             if( !user ) {
-                return reject( info );
+                return reject({ error: info });
             }
 
             req.logIn( user, loginError => {
                 if( loginError ) {
-                    reject( loginError );
+                    reject({ error: loginError.message });
                 } else {
-                    resolve( user );
+                    resolve({  user });
                 }
             });
 
@@ -46,12 +52,15 @@ function hashPassword( password ) {
 
 export function signup( req ) {
 
-    const { username, email, password, } = req.query;
+    const { username, email, password, } = req.body;
 
     return new Promise( ( resolve, reject ) => {
 
         if( req.user ) {
-            return reject({ error: 'You are already logged in' });
+            return reject({
+                error: "You are already logged in and can't create a new account.",
+                alreadyLoggedIn: true
+            });
         }
 
         if( !password || !username || !email ) {

@@ -90,7 +90,7 @@ export default class Studies extends Component {
 
         return <div>
             <h1 className={ appStyles.pageTitle }>
-                Fluorquinolone Studies ({ studies.length })
+                Fluorquinolone Studies
             </h1>
 
             <Helmet title="Studies" />

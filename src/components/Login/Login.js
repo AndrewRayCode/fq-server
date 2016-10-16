@@ -14,16 +14,21 @@ export default class Login extends Component {
 
     render() {
 
-        const { logout, } = this.props;
+        const { error, } = this.props;
         const styles = require('./Login.scss');
 
         return <div className={ styles.loginForm }>
             <form onSubmit={ this.handleSubmit }>
+                { error.error ? <div className="alert alert-danger" role="alert" id="existsToast">
+                    <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true" />
+                    {' '}{ error.error }
+                </div> : null }
                 <div className="row">
                     <div className="col-md-6">
                         <label htmlFor="username">Username or email</label>
                         <div className="form-group">
                             <input
+                                autoFocus
                                 id="username"
                                 type="text"
                                 ref="username"
@@ -45,9 +50,14 @@ export default class Login extends Component {
                         </div>
                     </div>
                 </div>
-                <button className="btn btn-success" onClick={this.handleSubmit}>
-                    <i className="fa fa-sign-in"/>{' '}Log In
-                </button>
+                <div className={ styles.right }>
+                    <button
+                        className="btn btn-success"
+                        onClick={ this.handleSubmit }
+                    >
+                        <i className="fa fa-sign-in" />{' '}Log In
+                    </button>
+                </div>
             </form>
         </div>;
 
