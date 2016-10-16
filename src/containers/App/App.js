@@ -63,7 +63,8 @@ export default class App extends Component {
                         { user ? <li>
                             Hello, <Dropdown
                                 items={[
-                                    <a onClick={ logout }>Log out</a>
+                                    <a onClick={ logout } key={ 0 }>Profile</a>,
+                                    <a onClick={ logout } key={ 1 }>Log out</a>
                                 ]}
                             >
                                 { user.username }{' '}

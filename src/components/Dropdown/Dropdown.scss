@@ -15,29 +15,31 @@
     min-width:100px;
     background:#fff;
     box-shadow:0 2px 4px rgba( 0, 0, 0, 0.4 );
-    border-radius:8px;
+    border-radius:4px;
     z-index:990;
     position:absolute;
+    overflow:hidden;
     top:28px;
-    right:-20px;
+    left:0;
 
     .item {
-        padding:3px 8px;
-        border-bottom:1px solid #666;
-
-        &:hover {
-            cursor:pointer;
-            background:#F7E4BE;
-        }
+        border-bottom:1px solid #DDD;
 
         &:last-child {
             border-bottom:none;
         }
 
         a {
+            display:block;
+            padding:8px 20px;
             color:#000;
-        }
 
+            &:hover {
+                cursor:pointer;
+                background:#F7E4BE;
+            }
+
+        }
     }
 
 }

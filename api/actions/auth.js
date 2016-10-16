@@ -156,7 +156,19 @@ export function load( req ) {
 export function logout( req ) {
 
     if( req.user ) {
-        return Promise.resolve({ success: true });
+
+        return new Promise( ( resolve, reject ) => {
+
+            req.logout( user, logoutError => {
+                if( logoutError ) {
+                    reject({ error: logoutError.message });
+                } else {
+                    resolve({ success: true });
+                }
+            });
+
+        });
+
     } else {
         return Promise.reject({ error: 'You are not logged in' });
     }
