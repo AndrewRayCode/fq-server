@@ -132,6 +132,6 @@ export function signup( email, username, password ) {
 export function logout() {
     return {
         types: [ LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL ],
-        promise: client => client.get( '/auth/logout' )
+        promise: client => client.post( '/auth/logout' )
     };
 }

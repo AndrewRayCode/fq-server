@@ -3,6 +3,14 @@ import db from '../../src/db';
 import { guid, } from '../../src/utils/utils';
 import bcrypt from 'bcrypt';
 
+function sanitizeUser( user ) {
+    return {
+        username: user.username,
+        email: user.email,
+        id: user.id,
+    };
+}
+
 export function login( req ) {
 
     const { usernameOrEmail, password, } = req.body;
@@ -26,7 +34,7 @@ export function login( req ) {
                 if( loginError ) {
                     reject({ error: loginError.message });
                 } else {
-                    resolve({  user });
+                    resolve( sanitizeUser( user ) );
                 }
             });
 
@@ -122,9 +130,7 @@ export function signup( req ) {
                             return aReject( loginError );
                         }
 
-                        aResolve({
-                            id: user.id
-                        });
+                        aResolve( user );
 
                     });
 
@@ -132,7 +138,7 @@ export function signup( req ) {
 
             }).then( created => {
 
-                resolve( created );
+                resolve( sanitizeUser( created ) );
 
             }).catch( error => {
                 console.error( 'Signup error', error );
@@ -144,33 +150,26 @@ export function signup( req ) {
 }
 
 export function load( req ) {
+
     const { user, } = req;
 
-    return Promise.resolve( user ? {
-        username: user.username,
-        email: user.email,
-        id: user.id,
-    } : null );
+    return Promise.resolve( user ? sanitizeUser( user ) : null );
+
 }
 
 export function logout( req ) {
 
-    if( req.user ) {
+    const { user, } = req;
 
-        return new Promise( ( resolve, reject ) => {
+    if( user ) {
 
-            req.logout( user, logoutError => {
-                if( logoutError ) {
-                    reject({ error: logoutError.message });
-                } else {
-                    resolve({ success: true });
-                }
-            });
-
-        });
+        req.logout();
+        return Promise.resolve({ success: true });
 
     } else {
+
         return Promise.reject({ error: 'You are not logged in' });
+
     }
 
 }

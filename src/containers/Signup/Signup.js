@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { asyncConnect } from 'redux-async-connect';
 import * as authActions from 'redux/modules/auth';
+import { push, } from 'react-router-redux';
 import {
     isLoaded as isAuthLoaded, load as loadAuth, signup
 } from 'redux/modules/auth';
@@ -23,7 +24,7 @@ import {
         user: state.auth.user,
         error: state.auth.signupError,
     }),
-    { signup, }
+    { signup, pushState: push }
 )
 export default class Signup extends Component {
 
@@ -32,7 +33,9 @@ export default class Signup extends Component {
         const email = this.refs.email;
         const username = this.refs.username;
         const password = this.refs.password;
-        this.props.signup( email.value, username.value, password.value );
+        this.props.signup(
+            email.value, username.value, password.value
+        ).then( () => this.props.pushState( '/profile' ) );
     }
 
     render() {

@@ -25,3 +25,7 @@ export function hasDOMParent( child, parent ) {
     }
     return false;
 }
+
+export function ellipsify( str, length ) {
+    return str.length > length ? str.substr( 0, length ) + '&hellip;' : str;
+}

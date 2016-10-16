@@ -59,9 +59,11 @@ export default class Dropdown extends Component {
         const styles = require( './Dropdown.scss' );
         const { isOpen, } = this.state;
 
-        return <span className={ styles.dropdown }>
+        return <span
+            className={ styles.dropdown }
+            ref="dropdown"
+        >
             <span
-                ref="dropdown"
                 className={ styles.trigger }
                 onClick={ this.onClick }
             >

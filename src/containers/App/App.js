@@ -10,6 +10,7 @@ import { push } from 'react-router-redux';
 import config from '../../config';
 import { asyncConnect, } from 'redux-async-connect';
 import * as authActions from 'redux/modules/auth';
+import { ellipsify, } from 'utils/utils';
 
 @asyncConnect( [{
     promise: ( { store: { dispatch, getState } } ) => {
@@ -35,9 +36,9 @@ export default class App extends Component {
         store: PropTypes.object.isRequired
     };
 
-    handleLogout = (event) => {
+    handleLogout = event => {
         event.preventDefault();
-        this.props.logout();
+        this.props.logout().then( () => this.props.pushState( '/' ) );
     };
 
     render() {
@@ -63,11 +64,11 @@ export default class App extends Component {
                         { user ? <li>
                             Hello, <Dropdown
                                 items={[
-                                    <a onClick={ logout } key={ 0 }>Profile</a>,
-                                    <a onClick={ logout } key={ 1 }>Log out</a>
+                                    <a href="/profile" key={ 0 }>Profile</a>,
+                                    <a href="#" onClick={ this.handleLogout } key={ 1 }>Log out</a>
                                 ]}
                             >
-                                { user.username }{' '}
+                                { ellipsify( user.username, 15 ) }{' '}
                                 <span
                                     className={ 'glyphicon glyphicon-cog ' + styles.gear }
                                     aria-hidden="true"

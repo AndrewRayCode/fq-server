@@ -12,7 +12,7 @@
 
 .list {
     color:#000;
-    min-width:100px;
+    min-width:150px;
     background:#fff;
     box-shadow:0 2px 4px rgba( 0, 0, 0, 0.4 );
     border-radius:4px;
@@ -36,7 +36,9 @@
 
             &:hover {
                 cursor:pointer;
-                background:#F7E4BE;
+                background:#B38184;
+                color:#fff;
+                text-shadow:0 0 2px rgba( 0, 0, 0, 0.4 );
             }
 
         }
