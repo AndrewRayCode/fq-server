@@ -4,6 +4,9 @@ const LOAD_FAIL = 'redux-example/auth/LOAD_FAIL';
 const LOGIN = 'redux-example/auth/LOGIN';
 const LOGIN_SUCCESS = 'redux-example/auth/LOGIN_SUCCESS';
 const LOGIN_FAIL = 'redux-example/auth/LOGIN_FAIL';
+const SIGNUP = 'redux-example/auth/SIGNUP';
+const SIGNUP_SUCCESS = 'redux-example/auth/SIGNUP_SUCCESS';
+const SIGNUP_FAIL = 'redux-example/auth/SIGNUP_FAIL';
 const LOGOUT = 'redux-example/auth/LOGOUT';
 const LOGOUT_SUCCESS = 'redux-example/auth/LOGOUT_SUCCESS';
 const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
@@ -15,18 +18,19 @@ const initialState = {
 export default function reducer( state = initialState, action = {} ) {
 
     switch( action.type ) {
+
         case LOAD:
             return {
-            ...state,
-            loading: true
-        };
+                ...state,
+                loading: true
+            };
         case LOAD_SUCCESS:
             return {
-            ...state,
-            loading: false,
-            loaded: true,
-            user: action.result
-        };
+                ...state,
+                loading: false,
+                loaded: true,
+                user: action.result
+            };
         case LOAD_FAIL:
             return {
             ...state,
@@ -34,41 +38,62 @@ export default function reducer( state = initialState, action = {} ) {
             loaded: false,
             error: action.error
         };
+
         case LOGIN:
             return {
-            ...state,
-            loggingIn: true
-        };
+                ...state,
+                loggingIn: true
+            };
         case LOGIN_SUCCESS:
             return {
-            ...state,
-            loggingIn: false,
-            user: action.result
-        };
+                ...state,
+                loggingIn: false,
+                user: action.result
+            };
         case LOGIN_FAIL:
             return {
-            ...state,
-            loggingIn: false,
-            user: null,
-            loginError: action.error
-        };
+                ...state,
+                loggingIn: false,
+                user: null,
+                loginError: action.error
+            };
+
+        case SIGNUP:
+            return {
+                ...state,
+                signingIn: true
+            };
+        case SIGNUP_SUCCESS:
+            return {
+                ...state,
+                signingIn: false,
+                user: action.result
+            };
+        case SIGNUP_FAIL:
+            return {
+                ...state,
+                signingIn: false,
+                user: null,
+                signupError: action.error
+            };
+
         case LOGOUT:
             return {
-            ...state,
-            loggingOut: true
-        };
+                ...state,
+                loggingOut: true
+            };
         case LOGOUT_SUCCESS:
             return {
-            ...state,
-            loggingOut: false,
-            user: null
-        };
+                ...state,
+                loggingOut: false,
+                user: null
+            };
         case LOGOUT_FAIL:
             return {
-            ...state,
-            loggingOut: false,
-            logoutError: action.error
-        };
+                ...state,
+                loggingOut: false,
+                logoutError: action.error
+            };
         default:
             return state;
     }
@@ -95,9 +120,18 @@ export function login( usernameOrEmail, password ) {
     };
 }
 
+export function signup( email, username, password ) {
+    return {
+        types: [ SIGNUP, SIGNUP_SUCCESS, SIGNUP_FAIL ],
+        promise: client => client.post( '/auth/signup', {
+            data: { email, username, password, }
+        })
+    };
+}
+
 export function logout() {
     return {
         types: [ LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL ],
-        promise: client => client.get('/logout')
+        promise: client => client.get( '/logout' )
     };
 }

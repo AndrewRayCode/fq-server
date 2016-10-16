@@ -7,13 +7,13 @@ export function login( req ) {
 
     const { usernameOrEmail, password, } = req.body;
 
-    if( !usernameOrEmail || !password ) {
-        return reject({ error: 'Please enter your username or email, and your password.' });
-    }
-
     return new Promise( ( resolve, reject ) => {
 
-        passport.authenticate( 'local', function authenticate( err, user, info ) {
+        if( !usernameOrEmail || !password ) {
+            return reject({ error: 'Please enter your username or email, and your password.' });
+        }
+
+        passport.authenticate( 'local', ( err, user, info ) => {
 
             if( err ) {
                 return reject({ error: err.message });
@@ -64,7 +64,7 @@ export function signup( req ) {
         }
 
         if( !password || !username || !email ) {
-            return reject({ error: 'Missing credentials' });
+            return reject({ error: 'Please enter an email address, username and password and try again.' });
         }
 
         return db( 'users' )
@@ -144,7 +144,13 @@ export function signup( req ) {
 }
 
 export function load( req ) {
-    return Promise.resolve( req.user || null );
+    const { user, } = req;
+
+    return Promise.resolve( user ? {
+        username: user.username,
+        email: user.email,
+        id: user.id,
+    } : null );
 }
 
 export function logout( req ) {

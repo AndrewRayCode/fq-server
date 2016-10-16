@@ -28,7 +28,7 @@ html, body {
     padding:20px 30px;
     border:1px solid #ddd;
     background:#fff;
-    border-radius:4px;
+    border-radius:7px;
     min-height:200px;
 
     .pageTitle {
@@ -78,7 +78,7 @@ html, body {
         font-size:17px;
 
         a {
-            text-shadow:0 0 2px #000;
+            text-shadow:-1px -1px 0 #312E3A;
             display:inline-block;
             margin:0 14px 0 0;
 
@@ -125,6 +125,14 @@ html, body {
 
     }
 
+    .gear {
+        color: #aaa;
+    }
+
+    .heart {
+        color:#B38184;
+    }
+
 }
 
 .footer {
@@ -146,4 +154,8 @@ html, body {
         }
     }
 
+}
+
+.vmid {
+    vertical-align:middle;
 }

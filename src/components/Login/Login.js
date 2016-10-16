@@ -19,7 +19,7 @@ export default class Login extends Component {
 
         return <div className={ styles.loginForm }>
             <form onSubmit={ this.handleSubmit }>
-                { error.error ? <div className="alert alert-danger" role="alert" id="existsToast">
+                { error ? <div className="alert alert-danger" role="alert" id="existsToast">
                     <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true" />
                     {' '}{ error.error }
                 </div> : null }

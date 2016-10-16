@@ -4,3 +4,4 @@ export About from './About/About';
 export Survey from './Survey/Survey';
 export NotFound from './NotFound/NotFound';
 export Studies from './Studies/Studies';
+export Signup from './Signup/Signup';

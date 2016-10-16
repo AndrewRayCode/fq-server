@@ -4,28 +4,22 @@ import { IndexLink } from 'react-router';
 import Helmet from 'react-helmet';
 import { Dropdown, Expander, Login, } from 'components';
 import {
-    isLoaded as isInfoLoaded, load as loadInfo
-} from 'redux/modules/info';
-import {
     isLoaded as isAuthLoaded, load as loadAuth, logout, login
 } from 'redux/modules/auth';
 import { push } from 'react-router-redux';
 import config from '../../config';
-import { asyncConnect } from 'redux-async-connect';
+import { asyncConnect, } from 'redux-async-connect';
 import * as authActions from 'redux/modules/auth';
 
 @asyncConnect( [{
     promise: ( { store: { dispatch, getState } } ) => {
         const promises = [];
 
-        if( !isInfoLoaded( getState() ) ) {
-            promises.push( dispatch( loadInfo() ) );
-        }
         if( !isAuthLoaded( getState() ) ) {
             promises.push( dispatch( loadAuth() ) );
         }
 
-        return Promise.all(promises);
+        return Promise.all( promises );
     }
 }] )
 @connect(
@@ -67,12 +61,16 @@ export default class App extends Component {
                     <ul className={ styles.auth }>
 
                         { user ? <li>
-                            <Dropdown
+                            Hello, <Dropdown
                                 items={[
                                     <a onClick={ logout }>Log out</a>
                                 ]}
                             >
-                                Hi, { user.name }!
+                                { user.username }{' '}
+                                <span
+                                    className={ 'glyphicon glyphicon-cog ' + styles.gear }
+                                    aria-hidden="true"
+                                />
                             </Dropdown>
                         </li> : [
                             <li key={ 0 }>

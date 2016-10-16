@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import { hasDOMParent, } from 'utils/utils';
 
 export default class Dropdown extends Component {
@@ -36,7 +37,7 @@ export default class Dropdown extends Component {
 
         if(
             isOpen &&
-            !hasDOMParent( event.target, React.findDOMNode( dropdown ) )
+            !hasDOMParent( event.target, ReactDOM.findDOMNode( dropdown ) )
         ) {
             this.setState({ isOpen: !isOpen });
         }
@@ -58,17 +59,19 @@ export default class Dropdown extends Component {
         const styles = require( './Dropdown.scss' );
         const { isOpen, } = this.state;
 
-        return <span>
+        return <span className={ styles.dropdown }>
             <span
                 ref="dropdown"
-                className={ styles.dropdown }
+                className={ styles.trigger }
                 onClick={ this.onClick }
             >
                 { this.props.children }
-                <span className="glyphicon glyphicon-chevron-down" aria-hidden="true" />
             </span>
             { isOpen ? <div className={ styles.list }>
-                { this.props.items.map( item => <div className={ styles.item }>
+                { this.props.items.map( ( item, index ) => <div
+                    key={ index }
+                    className={ styles.item }
+                >
                     { item }
                 </div> ) }
             </div> : null }

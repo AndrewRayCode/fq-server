@@ -1,7 +1,43 @@
 .dropdown {
     position:relative;
+}
+
+.trigger {
     display:inline-block;
     border:1px solid #ccc;
     padding: 6px 12px;
     border-radius:4px;
+    cursor:pointer;
+}
+
+.list {
+    color:#000;
+    min-width:100px;
+    background:#fff;
+    box-shadow:0 2px 4px rgba( 0, 0, 0, 0.4 );
+    border-radius:8px;
+    z-index:990;
+    position:absolute;
+    top:28px;
+    right:-20px;
+
+    .item {
+        padding:3px 8px;
+        border-bottom:1px solid #666;
+
+        &:hover {
+            cursor:pointer;
+            background:#F7E4BE;
+        }
+
+        &:last-child {
+            border-bottom:none;
+        }
+
+        a {
+            color:#000;
+        }
+
+    }
+
 }
