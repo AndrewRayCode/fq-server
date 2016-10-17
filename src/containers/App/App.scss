@@ -60,6 +60,11 @@ html, body {
             text-shadow:-1px -1px 0 #312E3A;
             display:inline-block;
             margin:0 14px 0 0;
+            color:#fff;
+
+            &:hover, &:active {
+                color:#fff;
+            }
 
             &:last-child {
                 margin:0;

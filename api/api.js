@@ -44,8 +44,11 @@ passport.use( new LocalStrategy(
     ( usernameOrEmail, password, next ) => {
 
         db( 'users' )
+            .select( 'users.*' )
+            .select( db.raw( 'ARRAY_AGG( DISTINCT user_roles.id ) as role_ids' ) )
             .where( 'email', usernameOrEmail )
             .orWhere( 'username', usernameOrEmail )
+            .leftJoin( 'user_roles', 'user_roles.user_id', 'users.id' )
             .then( rows => {
 
                 if( rows.length !== 1 ) {
