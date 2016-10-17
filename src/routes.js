@@ -2,7 +2,8 @@ import React from 'react';
 import { IndexRoute, Route, } from 'react-router';
 import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
 import {
-    App, Chat, Home, Widgets, Studies, About, Signup, Survey, NotFound, Profile,
+    App, Chat, Home, Widgets, Studies, About, Signup, Survey, NotFound,
+    Profile, CreateStudy,
 } from 'containers';
 
 export default store => {
@@ -50,6 +51,7 @@ export default store => {
         { /* Routes */ }
         <Route path="about" component={ About } />
         <Route path="studies" component={ Studies } />
+        <Route path="/addStudy" component={ CreateStudy } />
 
         <Route onEnter={ requireLogout }>
             <Route path="signup" component={ Signup } />

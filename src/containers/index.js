@@ -6,3 +6,4 @@ export NotFound from './NotFound/NotFound';
 export Studies from './Studies/Studies';
 export Signup from './Signup/Signup';
 export Profile from './Profile/Profile';
+export CreateStudy from './CreateStudy/CreateStudy';

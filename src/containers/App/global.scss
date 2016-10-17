@@ -1,23 +1,3 @@
-body, html {
-	margin:0;
-	padding:0;
-	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-	font-size:14px;
-}
-
-header {
-    padding:10px 20px;
-    background:#46255A;
-    color:#fff;
-    margin:0 0 20px;
-    box-shadow:0 0 4px #577AA4;
-}
-
-header h1 {
-    padding:0;
-    margin:0;
-}
-
 .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
 .autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
 .autocomplete-selected { background: #F0F0F0; }

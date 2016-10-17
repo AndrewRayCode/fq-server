@@ -15,3 +15,4 @@ export ShowMore from './ShowMore/ShowMore';
 export Dropdown from './Dropdown/Dropdown';
 export Login from './Login/Login';
 export Expander from './Expander/Expander';
+export AutoComplete from './AutoComplete/AutoComplete';
