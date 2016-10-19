@@ -50,10 +50,11 @@ passport.use( new LocalStrategy(
             .where( 'email', usernameOrEmail )
             .orWhere( 'username', usernameOrEmail )
             .leftJoin( 'user_roles', 'user_roles.user_id', 'users.id' )
+            .groupBy( 'users.id' )
             .then( rows => {
 
                 if( rows.length !== 1 ) {
-                    next( new Error( 'We did not find a user with that username nor email.' ) );
+                    return next( new Error( 'We did not find a user with that username nor email.' ) );
                 }
 
                 const existingUser = rows[ 0 ];
@@ -62,18 +63,21 @@ passport.use( new LocalStrategy(
                 bcrypt.compare( password, encrypted_password, ( err, res ) => {
 
                     if( err ) {
-                        next( new Error( 'Unknown error' ) );
+                        return next( new Error( 'Unknown error' ) );
                     }
 
                     if( !res ) {
-                        next( new Error( 'Incorrect password' ) );
+                        return next( new Error( 'Incorrect password' ) );
                     }
 
                     next( null, existingUser );
 
                 });
 
-            }).catch( next );
+            }).catch( error => {
+                console.error( 'Login error',error );
+                next( new Error( 'Unknown error' ) );
+            });
 
     }
 ));

@@ -11,6 +11,7 @@ import widgets from './widgets';
 import studies from './studies';
 import keywords from './keywords';
 import authors from './authors';
+import site from './site';
 
 export default combineReducers({
     routing: routerReducer,
@@ -20,4 +21,5 @@ export default combineReducers({
     studies,
     keywords,
     authors,
+    site,
 });
