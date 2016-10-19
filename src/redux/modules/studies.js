@@ -1,20 +1,35 @@
 const LOAD = 'redux-example/studies/LOAD';
 const LOAD_SUCCESS = 'redux-example/studies/LOAD_SUCCESS';
 const LOAD_FAIL = 'redux-example/studies/LOAD_FAIL';
-const EDIT_START = 'redux-example/studies/EDIT_START';
-const EDIT_STOP = 'redux-example/studies/EDIT_STOP';
+const TITLE_CHECK = 'redux-example/studies/TITLE_CHECK';
+const TITLE_CHECK_SUCCESS = 'redux-example/studies/TITLE_CHECK_SUCCESS';
+const TITLE_CHECK_FAIL = 'redux-example/studies/TITLE_CHECK_FAIL';
+const CLEAR_TITLE_ERROR = 'redux-example/studies/CLEAR_TITLE_ERROR';
 const SAVE = 'redux-example/studies/SAVE';
 const SAVE_SUCCESS = 'redux-example/studies/SAVE_SUCCESS';
 const SAVE_FAIL = 'redux-example/studies/SAVE_FAIL';
 
 const initialState = {
-  loaded: false,
-  editing: {},
-  saveError: {}
+    loaded: false,
+    saveError: null,
+    existingStudyId: null,
 };
 
 export default function reducer( state = initialState, action = {} ) {
-    switch (action.type) {
+
+    switch( action.type ) {
+        case CLEAR_TITLE_ERROR: {
+            return {
+                ...state,
+                existingStudyId: null,
+            };
+        }
+        case TITLE_CHECK_SUCCESS: {
+            return {
+                ...state,
+                existingStudyId: action.result.existingId,
+            };
+        }
         case LOAD: {
             return {
                 ...state,
@@ -39,50 +54,19 @@ export default function reducer( state = initialState, action = {} ) {
                 error: action.error
             };
         }
-        case EDIT_START: {
-            return {
-                ...state,
-                editing: {
-                    ...state.editing,
-                    [action.id]: true
-                }
-            };
-        }
-        case EDIT_STOP: {
-            return {
-                ...state,
-                editing: {
-                    ...state.editing,
-                    [action.id]: false
-                }
-            };
-        }
         case SAVE: {
             return state; // 'saving' flag handled by redux-form
         }
         case SAVE_SUCCESS: {
-            const data = [...state.data];
-            data[action.result.id - 1] = action.result;
             return {
                 ...state,
-                data: data,
-                editing: {
-                    ...state.editing,
-                    [action.id]: false
-                },
-                saveError: {
-                    ...state.saveError,
-                    [action.id]: null
-                }
+                saveError: null,
             };
         }
         case SAVE_FAIL: {
             return typeof action.error === 'string' ? {
                 ...state,
-                saveError: {
-                    ...state.saveError,
-                    [action.id]: action.error
-                }
+                saveError: action.error,
             } : state;
         }
 
@@ -90,6 +74,7 @@ export default function reducer( state = initialState, action = {} ) {
             return state;
         }
     }
+
 }
 
 export function isLoaded( globalState ) {
@@ -103,21 +88,18 @@ export function search( params ) {
     };
 }
 
-export function save(widget) {
+export function save( study ) {
     return {
         types: [ SAVE, SAVE_SUCCESS, SAVE_FAIL ],
-        id: widget.id,
-        promise: (client) => client.post('/widget/update', {
-            data: widget
+        promise: client => client.post( '/studies/add', {
+            data: study
         })
     };
 }
 
-export function editStart(id) {
-    return { type: EDIT_START, id };
+export function checkTitle( title ) {
+    return {
+        types: [ TITLE_CHECK, TITLE_CHECK_SUCCESS, TITLE_CHECK_FAIL ],
+        promise: client => client.get( '/studies/checkTitle', { params: { title } } )
+    };
 }
-
-export function editStop(id) {
-    return { type: EDIT_STOP, id };
-}
-

@@ -1,3 +1,4 @@
+import path from 'path';
 import express from 'express';
 import session from 'express-session';
 import bodyParser from 'body-parser';
@@ -88,7 +89,7 @@ passport.deserializeUser( ( obj, cb ) => {
 
 const storage = multer.diskStorage({
     destination: ( req, file, cb ) => {
-        cb( null, path.join( __dirname, 'uploads' ) );
+        cb( null, path.join( __dirname, '../uploads' ) );
     },
     filename: ( req, file, cb ) => {
         cb( null, file.originalname );
@@ -107,28 +108,28 @@ const addUploads = upload.fields( [{
 }] );
 
 app.use( addUploads, ( req, res ) => {
-    const splittedUrlPath = req.url.split('?')[0].split('/').slice(1);
+    const splittedUrlPath = req.url.split( '?' )[ 0 ].split( '/' ).slice( 1 );
 
-    const {action, params} = mapUrl(actions, splittedUrlPath);
+    const { action, params, } = mapUrl( actions, splittedUrlPath );
 
-    if (action) {
-        action(req, params)
-        .then((result) => {
-            if (result instanceof Function) {
-                result(res);
-            } else {
-                res.json(result);
-            }
-        }, (reason) => {
-            if (reason && reason.redirect) {
-                res.redirect(reason.redirect);
-            } else {
-                console.error('API ERROR:', pretty.render(reason));
-                res.status(reason.status || 500).json(reason);
-            }
-        });
+    if( action ) {
+        action( req, params )
+            .then( result => {
+                if (result instanceof Function) {
+                    result(res);
+                } else {
+                    res.json(result);
+                }
+            }, reason => {
+                if( reason && reason.redirect ) {
+                    res.redirect(reason.redirect);
+                } else {
+                    console.error( 'API ERROR:', pretty.render( reason ) );
+                    res.status( reason.status || 500 ).json( reason );
+                }
+            });
     } else {
-        res.status(404).end('NOT FOUND');
+        res.status( 404 ).end( 'NOT FOUND' );
     }
 });
 

@@ -36,7 +36,7 @@ function searchStudiesQuery( search ) {
             return {
                 id: row.id,
                 title: row.title,
-                includesFQs: !!row.includesFQs,
+                includes_fqs: !!row.includes_fqs,
                 fulltext: row.fulltext,
                 year: row.year,
                 month: row.month,
@@ -104,7 +104,7 @@ export function add( req ) {
     const title = req.body.title;
     const month = req.body.month;
     const year = req.body.year;
-    const includesFqs = req.body.includesFqs;
+    const includes_fqs = req.body.includes_fqs;
     const conclusions = req.body.conclusions;
     const abstract = req.body.abstract;
     const fulltext = fileName ? '/uploads/' + fileName : req.body.fulltext;
@@ -117,7 +117,7 @@ export function add( req ) {
     });
 
     // Check for existing study
-    db.select( 'id' )
+    return db.select( 'id' )
         .from( 'studies' )
         .where( 'title', title )
         .then( result => {
@@ -233,13 +233,8 @@ export function add( req ) {
         }).then( continuation => {
 
             return db.insert({
-                title: title,
-                includesFqs: includesFqs ? 1 : 0,
-                fulltext: fulltext,
-                month: month,
-                year: year,
-                conclusions: conclusions,
-                abstract: abstract
+                includes_fqs: includes_fqs ? 1 : 0,
+                title, fulltext, month, year, conclusions, abstract,
             }).into( 'studies' )
                 .returning( 'id' )
                 .then( studyRow => {
@@ -259,7 +254,7 @@ export function add( req ) {
             return Promise.all( Object.keys( kws ).map( name => {
                 return db.insert({
                     study_id: sids,
-                    keyword_id: keywords[ name ],
+                    keyword_id: kws[ name ],
                 }).into( 'study_keywords' );
             }) ).then( () => {
                 return continuation;

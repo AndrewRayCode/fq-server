@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { asyncConnect } from 'redux-async-connect';
@@ -6,8 +7,9 @@ import * as authActions from 'redux/modules/auth';
 import { push, } from 'react-router-redux';
 import { AutoComplete, } from 'components';
 import {
-    isLoaded as isAuthLoaded, load as loadAuth, signup
+    isLoaded as isAuthLoaded, load as loadAuth, signup,
 } from 'redux/modules/auth';
+import { checkTitle, save, } from 'redux/modules/studies';
 
 @asyncConnect( [{
     promise: ( { store: { dispatch, getState } } ) => {
@@ -23,25 +25,27 @@ import {
 @connect(
     state => ({
         user: state.auth.user,
-        error: state.auth.signupError,
+        existingStudyId: state.studies.existingStudyId,
+        error: state.studies.saveError,
     }),
-    { signup, pushState: push }
+    { signup, checkTitle, pushState: push, save, }
 )
 export default class CreateStudy extends Component {
 
     handleSubmit = event => {
         event.preventDefault();
-        const email = this.refs.email;
-        const username = this.refs.username;
-        const password = this.refs.password;
-        this.props.signup(
-            email.value, username.value, password.value
-        ).then( () => this.props.pushState( '/profile' ) );
+
+        const form = ReactDOM.findDOMNode( this.refs.form );
+        const formData = new FormData( form );
+
+        this.props.save( formData ).then( () => {
+            form.reset();
+        });
     }
 
     render() {
 
-        const { error, titleError, } = this.props;
+        const { error, existingStudyId, } = this.props;
         const styles = require( './CreateStudy.scss' );
         const appStyles = require( '../App/App.scss' );
 
@@ -53,7 +57,7 @@ export default class CreateStudy extends Component {
                 Add Study
             </h1>
 
-            <form onSubmit={ this.handleSubmit }>
+            <form onSubmit={ this.handleSubmit } ref="form">
 
                 <div className="form-group">
                     <label>
@@ -64,10 +68,11 @@ export default class CreateStudy extends Component {
                         type="text"
                         placeholder="Title"
                         className="form-control"
+                        onBlur={ e => this.props.checkTitle( e.target.value ) }
                     />
-                    { titleError ? <div className="alert alert-danger" role="alert" id="existsToast">
+                    { existingStudyId ? <div className="alert alert-danger" role="alert" id="existsToast">
                         <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                        <span className="sr-only">Error: </span> { titleError }
+                        <span className="sr-only">Error: </span> This study already exists
                     </div> : null }
                 </div>
 
@@ -75,7 +80,7 @@ export default class CreateStudy extends Component {
                     <label>
                         <input
                             value="true"
-                            name="includesFqs"
+                            name="includes_fqs"
                             type="checkbox"
                             placeholder="title"
                             defaultChecked
