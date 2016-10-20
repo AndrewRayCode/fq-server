@@ -1,4 +1,5 @@
 import db from '../../src/db';
+import commonWords from 'common-words';
 
 function objectValues( obj ) {
     return Object.keys( obj ).map( key => obj[ key ] );
@@ -8,18 +9,20 @@ function searchStudiesQuery( search ) {
 
     let query = db( 'studies' )
         .select( 'studies.*' )
+        .select( 'study_analysis.slug' )
 
         .select( db.raw( 'ARRAY_AGG( DISTINCT keywords.id ) as keyword_ids' ) )
         .select( db.raw( 'ARRAY_AGG( DISTINCT keywords.name ) as keyword_names' ) )
         .leftJoin( 'study_keywords', 'study_keywords.study_id', 'studies.id' )
         .leftJoin( 'keywords', 'study_keywords.keyword_id', 'keywords.id'  )
+        .leftJoin( 'study_analysis', 'study_analysis.study_id', 'studies.id'  )
 
         .select( db.raw( 'ARRAY_AGG( DISTINCT authors.id ) as author_ids' ) )
         .select( db.raw( 'ARRAY_AGG( DISTINCT authors.name ) as author_names' ) )
         .leftJoin( 'study_authors', 'study_authors.study_id', 'studies.id' )
         .leftJoin( 'authors', 'study_authors.author_id', 'authors.id'  )
 
-        .groupBy( 'studies.id' );
+        .groupBy( 'studies.id', 'study_analysis.slug' );
 
     if( 'keywords' in search ) {
         query = query.whereIn( 'keywords.name', search.keywords );
@@ -28,6 +31,9 @@ function searchStudiesQuery( search ) {
     return query.then( rows => {
         return rows.map( row => {
 
+            const {
+                slug, title, fulltext, year, month, conclusions, abstract
+            } = row;
             const keywordIds = row.keyword_ids;
             const keywordNames = row.keyword_names;
             const authorIds = row.author_ids;
@@ -35,13 +41,14 @@ function searchStudiesQuery( search ) {
 
             return {
                 id: row.id,
-                title: row.title,
+                slug,
+                title,
                 includes_fqs: !!row.includes_fqs,
-                fulltext: row.fulltext,
-                year: row.year,
-                month: row.month,
-                conclusions: row.conclusions,
-                abstract: row.abstract,
+                fulltext,
+                year,
+                month,
+                conclusions,
+                abstract,
 
                 // I don't know why the above query returns dupe keywords,
                 // authors, etc. tried adding DISTINCT to the ARRAY_AGG
@@ -107,7 +114,7 @@ export function add( req ) {
     const includes_fqs = req.body.includes_fqs;
     const conclusions = req.body.conclusions;
     const abstract = req.body.abstract;
-    const fulltext = fileName ? '/uploads/' + fileName : req.body.fulltext;
+    const fulltext = fileName ? '/files/' + fileName : req.body.fulltext;
 
     const authors = req.body.authors.split(',').map( author => {
         return author.trim();
@@ -362,4 +369,61 @@ export function searchStudies( req ) {
 
     return searchStudiesQuery( req.query );
 
+}
+
+export function analysis( req ) {
+
+    return db( 'study_analysis' )
+        .select( 'study_analysis.*', 'studies.*' )
+        .leftJoin( 'studies', 'studies.id', 'study_analysis.study_id' )
+        .where( 'slug', req.query.slug || 'not exist string to avoid knex error' )
+        .then( rows => {
+
+            return rows[ 0 ] || null;
+
+        });
+
+}
+
+export function migrateStudiesToAnalysis() {
+
+    let counter = 0;
+
+    return db( 'studies' )
+        .select( '*' )
+        .then( rows => {
+            return Promise.all( rows.map( row => {
+
+                const slug = row.title
+                    .toLowerCase()
+                    .replace( /[^a-z0-9\s]/g, '' )
+                    .replace( /\s{2,}/g, ' '  )
+                    .trim()
+                    .replace( / /g, '-' )
+                    .split( '-' )
+                    .filter( word =>
+                        !commonWords.some( cw => cw.word === word )
+                    )
+                    .slice( 0, 8 )
+                    .join( '-' );
+
+                return db( 'study_analysis' )
+                    .select( 'id' )
+                    .where( 'slug', slug )
+                    .then( aRows => {
+                        if( aRows.length === 0 ) {
+                            counter++;
+                            return db.insert({
+                                slug,
+                                title: row.title,
+                                study_id: row.id,
+                                body: 'No analysis of this study has been created. You may still comment on this study.'
+                            }).into( 'study_analysis' );
+                        }
+                    });
+                        
+            }) );
+        }).then( () => {
+            return { total: counter };
+        });
 }

@@ -8,6 +8,7 @@ import {
 } from 'redux/modules/site';
 import {
     App, Home, Studies, About, Signup, NotFound, Profile, CreateStudy,
+    Analysis,
 } from 'containers';
 
 export default store => {
@@ -89,6 +90,7 @@ export default store => {
         { /* Routes */ }
         <Route path="about" component={ About } />
         <Route path="studies" component={ Studies } />
+        <Route path="studies/:slug" component={ Analysis } />
 
         <Route onEnter={ requireAdmin }>
             <Route path="/addStudy" component={ CreateStudy } />

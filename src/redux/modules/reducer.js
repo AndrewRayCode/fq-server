@@ -12,6 +12,7 @@ import studies from './studies';
 import keywords from './keywords';
 import authors from './authors';
 import site from './site';
+import analysis from './analysis';
 
 export default combineReducers({
     routing: routerReducer,
@@ -22,4 +23,5 @@ export default combineReducers({
     keywords,
     authors,
     site,
+    analysis,
 });

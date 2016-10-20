@@ -7,3 +7,4 @@ export Studies from './Studies/Studies';
 export Signup from './Signup/Signup';
 export Profile from './Profile/Profile';
 export CreateStudy from './CreateStudy/CreateStudy';
+export Analysis from './Analysis/Analysis';

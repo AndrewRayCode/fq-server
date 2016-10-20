@@ -1,10 +1,12 @@
 const LOAD = 'redux-example/studies/LOAD';
 const LOAD_SUCCESS = 'redux-example/studies/LOAD_SUCCESS';
 const LOAD_FAIL = 'redux-example/studies/LOAD_FAIL';
+
 const TITLE_CHECK = 'redux-example/studies/TITLE_CHECK';
 const TITLE_CHECK_SUCCESS = 'redux-example/studies/TITLE_CHECK_SUCCESS';
 const TITLE_CHECK_FAIL = 'redux-example/studies/TITLE_CHECK_FAIL';
 const CLEAR_TITLE_ERROR = 'redux-example/studies/CLEAR_TITLE_ERROR';
+
 const SAVE = 'redux-example/studies/SAVE';
 const SAVE_SUCCESS = 'redux-example/studies/SAVE_SUCCESS';
 const SAVE_FAIL = 'redux-example/studies/SAVE_FAIL';

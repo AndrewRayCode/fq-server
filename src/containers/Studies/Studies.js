@@ -156,7 +156,10 @@ export default class Studies extends Component {
                     >
                         <div className="panel panel-default">
                             <div className="panel-body">
-                                <div className={ styles.title }>{ study.title }</div>
+                                <a
+                                    href={ `/studies/${ study.slug }` }
+                                    className={ styles.title }
+                                >{ study.title }</a>
                                 <ul className={ styles.subTitle }>
                                     <li>
                                         <a href={ study.fulltext } target="_blank">Full Text</a>
